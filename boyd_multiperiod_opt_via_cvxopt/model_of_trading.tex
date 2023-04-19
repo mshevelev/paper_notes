@@ -1,0 +1,93 @@
+\newcommand{\holdcost}{\phi^{hold}}
+\newcommand{\holdcostnorm}{\phi^{hold.n}}
+\newcommand{\tradecost}{\phi^{trade}}
+\newcommand{\tradecostnorm}{\phi^{trade.n}}
+
+\subsection{Holdings and trades}
+\begin{itemize}
+	\item $p_t \in \R^n$ \texttt{reference prices} \textcolor{orange}{at the beginning} of period $t$
+	\item $r_t \in \R^{n+1}$ \texttt{vector of asset and cash returns \underline{from period t to period t+1}}
+	\item $h_t \in \R^{n+1}$ usd \texttt{holding values} of $n$ assets + \texttt{cash account} at the beginning of period $t$
+	\item $u_t \in \R^{n+1}$ usd \texttt{trading values} (at reference prices). 
+	\begin{itemize}[label=$\star$]
+		\item \textcolor{orange}{Assume: trades are executed at the beginning of period t}
+		\item $(u_t)_{n+1}$ amount we \underline{put into} cash account
+	\end{itemize}
+	\item \texttt{NAV}(value): $ v_t = \vecone^T h_t $. Assume $v_t > 0$
+	\item \texttt{holding weights} (normalized holdings, fraction of NAV): $w_t = \frac{h_t}{v_t}$
+	\item \texttt{\underline{normalized} trades} (fraction of NAV): $z_t = \frac{u_t}{v_t}$
+	\item \texttt{GMV}(gross exposure): $\norm{(h_t)_{1:n}}_1$; \texttt{Leverage}: $\frac{GMV}{NAV}=\frac{\norm{(h_t)_{1:n}}_1}{\vecone^T h_t} = \norm{(w_t)_{1:n}}_1$
+	\item \texttt{Turnover} (in usd): $\norm{(u_t)_{1:n}}_1$
+	\item \texttt{post-trade portfolio}: $h_t^+ = h_t + u_t$
+	\item \texttt{post-trade value}: $v_t^+ = \vecone^T h_t^+$
+	\item \texttt{\underline{normalized} post-trade portfolio}\footnote{does not sum up to one}: $\frac{h_t^+}{v_t} = w_t + z_t$
+\end{itemize}
+\subsection{Costs}
+\begin{itemize}
+	\item \texttt{trading (transaction) cost} (in usd): $\tradecost_t(u_t): \R^{n+1} \to \R$
+	\begin{itemize}[label=$\star$]
+		\item convex\footnote{example of non-convex transaction cost is constant for any non-zero trade}, but can be negative
+		\item does not depend on $(u_t)_{n+1}$
+		\item $\tradecost_t(0) = 0$, i.e. "no trade $\Rightarrow$ no cost"
+		\item separable into costs by individual assets $\sum_{i=1}^n (\tradecost_t)_i((u_t)_i)$
+		\item example: $x \longrightarrow a |x| + b x + c \sigma \frac {|x|^{3/2}}{V^{1/2}}$
+	\end{itemize} 
+	\item \texttt{\underline{normalized} trading (transaction) cost}: $\tradecost_t(u_t) / v_t$
+	\begin{itemize}[label=$\star$]
+		\item same formula, just renormalize coefficients\footnote{only terms that don't scale linearly}, e.g. $z \longrightarrow a |z| + b z + c \sigma \frac{|z|^{3/2}}{(V/v)^{3/2}}$
+		\item with abuse of notation, denote $\tradecostnorm_t(z)$
+	\end{itemize}
+	\item \texttt{holding cost} (in usd): $\holdcost_t(h_t^+): \R^{n+1} \to \R$\footnote{reminder, we hold post-trade portfolio $h_t^+$ over the period $t$}
+	\begin{itemize}[label=$\star$]
+		\item convex, but can be negative
+		\item does not depend on $(h_t^+)_{n+1}$
+		\item example: $x \longrightarrow s_{borrow}^T (h_t^+)_{-}$
+	\end{itemize}
+	\item \texttt{\underline{normalized} holding cost} $\holdcost_t(h_t^+)/v_t$
+	\begin{itemize}[label=$\star$]
+		\item same formula
+		\item with abuse of notation\footnote{for the example above, there is no abuse of notation since it only include order-1 terms}, denote $\holdcostnorm_t(w_t+z_t)$
+	\end{itemize}
+\end{itemize}
+
+\subsection{Self-financing condition}
+
+\textcolor{orange}{\underline{Assumption}: no cash is put into or taken out}
+
+\textcolor{orange}{\underline{Assumption}: trading/holding costs are paid from cash account \underline{at the beginning} of the period}
+
+The balance equation is:
+\begin{align}
+	 \underbrace{\tradecost_t(u_t) + \holdcost(h_t^+)}_{\text{cash cost incurred}} = \underbrace{-\vecone^T u_t}_{\substack{\text{cash out of the portfolio}\\\text{from the trades}}}
+\end{align}
+
+It implies that "post-trade value" is "pre-trade value" minus "transaction and holding costs":
+\begin{align}
+	v_t^+ = v_t - \underbrace{(\tradecost_t(u_t) + \holdcost(h_t^+))}_{\text{cash cost incurred}}
+\end{align}
+
+It also gives the value of \texttt{cash change amount} based on \underline{non-cash asset trades}:
+\begin{align}
+	(u_t)_{n+1} = - \left( \vecone^T (u_t)_{1:n} + \underbrace{\tradecost_t((u_t)_{1:n}) + \holdcost((h_t+u_t)_{1:n})}_{\text{cost incurred from non-cash asset trades}}\right) 
+\end{align}
+
+To get \underline{normalized} versions, we divide by $v_t$ and use $h_t = w_t v_t$ and $u_t = z_t v_t$:
+\begin{align}
+	\underbrace{\tradecostnorm_t(z_t) + \holdcostnorm(w_t+z_t)}_{\text{cash cost incurred in units of NAV}} = \underbrace{-\vecone^T z_t}_{\substack{\text{cash out of the portfolio}\\\text{from the trades}}}
+\end{align}
+
+\subsection{Investment}
+\textcolor{orange}{\underline{Assumption}: post-trade portfolio and cash are invested for one period (until the beginning of the next time period)}
+\begin{itemize}
+	\item \texttt{next period portfolio}\footnote{"dynamics equation"; in case of non-instant trading it turns into $h_{t+1} = h_t \circ (\vecone + r_t) + u_t \circ (\vecone + r^{\text{avg.exec to close}}_t)$}: $h_{t+1} = h_t^+ + r_t \circ h_t^+ = (\vecone + r_t) \circ h_t^+=(\vecone + r_t) \circ (h_t+u_t)$
+	\item \texttt{next period portfolio value}: 
+	\begin{align*}
+	\underbrace{v_{t+1}}_{\text{new value}} &= \vecone^T h_{t+1} = (\vecone+r_t)^T h_t^+ = \underbrace{v_t}_{\text{old value}} + \underbrace{r_t ^T h_t}_{\text{hold pnl}} + \underbrace{(\vecone + r_t)^T u_t}_{\text{trade pnl}}\\
+		&= \underbrace{v_t}_{\text{old value}} + \underbrace{r_t ^T h_t}_{\text{hold pnl}} + \underbrace{r_t^T u_t}_{\text{precost trade pnl}} - \underbrace{(\tradecost_t(u_t) + \holdcost(h_t^+))}_{\text{cash cost incurred}}
+	\end{align*}
+	\item \texttt{Portfolio return} (fractional increase in portfolio value): 
+	\begin{align}
+	R^p_t = \frac{v_{t+1} - v_t}{v_t} = \underbrace{r_t ^T w_t}_{\text{return on holdings}} + \underbrace{r_t^T z_t}_{\text{return on trades}}- \underbrace{(\tradecostnorm_t(z_t) + \holdcostnorm(w_t+z_t))}_{\text{cost in units of NAV}}
+	\end{align}
+	\item \texttt{next period weights}: $w_{t+1} = \frac{h_{t+1}}{v_{t+1}}=\frac{(\vecone + r_t) \circ h_t^+}{v_t(1+R^p_t)}=\frac{1}{1+R^p_t}  (\vecone + r_t) \circ (w_t+z_t)$
+\end{itemize}
