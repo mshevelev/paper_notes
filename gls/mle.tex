@@ -1,0 +1,31 @@
+\section{Model and MLE of parameters}
+Consider the model of data
+\begin{align}
+	y &= X \beta + \epsilon  \\
+	\epsilon &\sim \Norm(\epsilon| 0, \Sigma) \nonumber
+\end{align}
+
+Assuming $X$ is given, we have $y|X \sim \Norm(y| X \beta, \Sigma)$ and conditional log-likelihood is:
+
+\begin{align*}
+	l_{y|X}(\beta) = \log f(y|X; \beta) \propto -\frac{1}{2} (y - X\beta)^T \Sigma^{-1} (y - X \beta)
+\end{align*}
+
+To find $\hat{\beta}^{MLE} = \argmax_\beta  l_{y|X}(\beta)$ we solve
+
+
+\begin{align*}
+	\triangledown_{\beta} l_{y|X}(\beta) = - X^T \Sigma^{-1} X \beta + X^T \Sigma^{-1} y = 0
+\end{align*}
+
+Hence
+\begin{align}
+	\hat{\beta}^{MLE} = (X^T \Sigma^{-1} X)^{-1} X^T \Sigma^{-1} y
+\end{align}
+
+\section{Implementation for multi-variate return time series}
+In special case when $y = R_{t,i}$ we can assume special structure for $\Sigma$:
+\begin{itemize}
+	\item errors for different time periods are uncorrelated
+	\item l
+\end{itemize}
