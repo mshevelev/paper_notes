@@ -1,4 +1,5 @@
-\section{Model and MLE of parameters}
+\section{The Model}
+\subsection{Generalized Least Squares (GLS) Regression}
 Consider the model of data
 \begin{align}
 	y &= X \beta + \epsilon  \\
@@ -20,12 +21,80 @@ To find $\hat{\beta}^{MLE} = \argmax_\beta  l_{y|X}(\beta)$ we solve
 
 Hence
 \begin{align}
+	\label{eq:beta_mle}
 	\hat{\beta}^{MLE} = (X^T \Sigma^{-1} X)^{-1} X^T \Sigma^{-1} y
 \end{align}
 
+
 \section{Implementation for multi-variate return time series}
-In special case when $y = R_{t,i}$ we can assume special structure for $\Sigma$:
+Consider the problem 
+\begin{align}\label{eq:return_alpha}
+	R_{t,i} &= \beta A_{t,i} + \epsilon_{t,i}, \\
+	(t,i) \in &\{(1, i_{1,1}),...,(1, i_{1, N_1}),\notag\\
+	&\phantom{\in\ }\cdots\notag\\
+	&\phantom{\in\ }(T, i_{T,1}),...,(T, i_{T, N_T})\} \notag
+\end{align}
+
+
+Note that indices are 2-dimensional, but not necessarily rectangular, i.e. set of stocks can be different on different days. We can arrange these variables into daily vector-variables.
+
+
+We can introduce the (random) vectors:
+\begin{align}
+	R = vec(R_{t,i}) = \begin{bmatrix}R_{1,i_{1,1}} \\ \vdots \\  R_{1,i_{1, N_1}} \\ \vdots \\ R_{T,i_{T,1}} \\ \vdots \\  R_{T,i_{T,N_T}} 
+		\end{bmatrix},
+	A = vec(A_{t,i}) = \begin{bmatrix}A_{1,i_{1,1}} \\ \vdots \\  A_{1,i_{1, N_1}} \\ \vdots \\ A_{T,i_{T,1}} \\ \vdots \\  A_{T,i_{T,N_T}} 
+\end{bmatrix},
+	\epsilon = vec(\epsilon_{t,i}) = \begin{bmatrix}\epsilon_{1,i_{1,1}} \\ \vdots \\  \epsilon_{1,i_{1, N_1}} \\ \vdots \\ \epsilon_{T,i_{T,1}} \\ \vdots \\  \epsilon_{T,i_{T,N_T}} 
+\end{bmatrix}
+\end{align}
+and rewrite \autoref{eq:return_alpha} in vector form:
+\begin{align}
+	R = A \beta + \epsilon, \epsilon \sim \Norm(\epsilon| 0, \Sigma)
+\end{align}
+
+\section{Exploting special structure of errors $\epsilon$}
+
+We can assume special structure for $\Sigma$:
 \begin{itemize}
-	\item errors for different time periods are uncorrelated
-	\item l
+	\item errors for different time periods are uncorrelated $cov(R_{t_1, i}, R_{t_2, j})=0$ if $t_1 \neq t_2$.
+\begin{align}
+	\label{eq:block_diagonal_sigma}
+	 \Sigma =
+\begin{bmatrix}
+	\Sigma_1 & 0 & \cdots & 0 \\
+	0 & \Sigma_2 & \cdots & 0 \\
+	\vdots & \vdots & \ddots & \vdots \\
+	0 & 0 & \cdots & \Sigma_T
+\end{bmatrix}
+\end{align}
+
+	\item errors in the same period $t$ have covariance matrix $\Sigma_t$ that has a "low-rank plus diagonal" structure 
+	
+	\begin{align}
+	\Sigma_t = L_t \Sigma^f_t L_t^T + \Lambda_t.
+	\end{align}
 \end{itemize}
+
+We can exploit these properties to simplify \autoref{eq:beta_mle}:
+\begin{itemize}
+	\item inverse of $\Sigma$ is
+\begin{align}
+\Sigma^{-1} = \begin{bmatrix}
+	\Sigma_1^{-1} & 0 & \cdots & 0 \\
+	0 & \Sigma_2^{-1} & \cdots & 0 \\
+	\vdots & \vdots & \ddots & \vdots \\
+	0 & 0 & \cdots & \Sigma_T^{-1}
+\end{bmatrix}
+\end{align}
+\item each $\Sigma_t$ can be inverted using Woodbury inversion formula:
+\begin{align}
+	\Sigma_t^{-1} = (L_t \Sigma^f_t L_t^T + \Lambda_t)^{-1} = \Lambda_t^{-1} + \Lambda_t^{-1} L_t ((\Sigma^f_t) ^ {-1} + L^T \Lambda_t^{-1} L ) L_t^T \Lambda_t^{-1}
+\end{align}
+ \item thus
+ \begin{itemize}
+ 	\item 
+ \end{itemize}
+
+\end{itemize}
+
