@@ -6,7 +6,7 @@ Consider the model of data
 	\epsilon &\sim \Norm(\epsilon| 0, \Sigma) \nonumber
 \end{align}
 
-Assuming $X$ is given, we have $y|X \sim \Norm(y| X \beta, \Sigma)$ and conditional log-likelihood is:
+Assuming $X$ is given, we have $y|X \sim \Norm(y| X, \beta, \Sigma)$ and conditional log-likelihood is:
 
 \begin{align*}
 	l_{y|X}(\beta) = \log f(y|X; \beta) \propto -\frac{1}{2} (y - X\beta)^T \Sigma^{-1} (y - X \beta)
