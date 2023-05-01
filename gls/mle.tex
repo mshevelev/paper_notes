@@ -1,114 +1,67 @@
-\section{The Model}
-\subsection{Generalized Least Squares (GLS) Regression}
+\section{Generalized Least Squares Regression}
+\subsection{Basic model}
 Consider the model of data
 \begin{align}
-	y &= X \beta + \epsilon  \\
-	\epsilon &\sim \Norm(\epsilon| 0, \Sigma) \nonumber
+	\label{eq:basic_model}
+	y &= X \beta + \epsilon  \\ 	
+	\epsilon &\sim \Norm(\epsilon| 0, \Sigma) \nonumber \\
+	X &\in \R^{n \times k}, y \in \R^n, \epsilon \in \R^n \nonumber 
 \end{align}
 
-Assuming $X$ is given, we have $y|X \sim \Norm(y| X, \beta, \Sigma)$ and conditional log-likelihood is:
+In the above, $\Sigma \in \MatricesPD^n$ is a known covariance matrix of errors, $\beta \in \R^k$ is an unknown constant vector of coefficients.  Our goal is to find a good estimate of $\beta$.
 
-\begin{align*}
-	l_{y|X}(\beta) = \log f(y|X; \beta) \propto -\frac{1}{2} (y - X\beta)^T \Sigma^{-1} (y - X \beta)
-\end{align*}
-
-To find $\hat{\beta}^{MLE} = \argmax_\beta  l_{y|X}(\beta)$ we solve
+Assuming $X$ is given, we have $y|X \sim \Norm(y| X\beta, \Sigma)$ and conditional log-likelihood of data $D=(X,y)$ is:
 
 
 \begin{align*}
-	\triangledown_{\beta} l_{y|X}(\beta) = - X^T \Sigma^{-1} X \beta + X^T \Sigma^{-1} y = 0
+	l(\beta) = \log f(y|X; \beta) \propto -\frac{1}{2} (y - X\beta)^T \Sigma^{-1} (y - X \beta)
 \end{align*}
 
-Hence
-\begin{align}
-	\label{eq:beta_mle}
-	\hat{\beta}^{MLE} = (X^T \Sigma^{-1} X)^{-1} X^T \Sigma^{-1} y
-\end{align}
-
-
-\section{Implementation for multi-variate return time series}
-Consider the problem 
-\begin{align}\label{eq:return_alpha}
-	R_{t,i} &= \sum_{k=1}^K \beta_k A^{(k)}_{t,i} + \epsilon_{t,i}, \\
-	(t,i) \in &\{(1, i_{1,1}),...,(1, i_{1, N_1}),\notag\\
-	&\phantom{\in\ }\cdots\notag\\
-	&\phantom{\in\ }(T, i_{T,1}),...,(T, i_{T, N_T})\} \notag
-\end{align}
-
-In the above:
-\begin{itemize}
-	\item $R_{t,i}$ are returns for stock $i$ over period $t$;
-	\item $A^{(k)}_{t,i}$ are features, usually alphas or their lagged versions.
-\end{itemize} 
-
-Note that indices are 2-dimensional, but not necessarily rectangular, i.e. set of stocks can be different on different days. For notation convenience we introduce daily (random) vectors where we put all variables with same index $t$ in a column\footnote{note that dimensions for vectors with different index $t$ might be different}:
-
-\begin{align}
-	R_{t,\cdot} = \begin{bmatrix}R_{t,i_{t,1}} \\ \vdots \\  R_{t,i_{t, N_t}} \end{bmatrix},
-	A^{(k)}_{t,\cdot} = \begin{bmatrix}A^{(k)}_{t,i_{t,1}} \\ \vdots \\  A^{(k)}_{t,i_{t, N_t}} \end{bmatrix},
-	\epsilon_{t,\cdot} = \begin{bmatrix}\epsilon_{t,i_{t,1}} \\ \vdots \\  \epsilon_{t,i_{t, N_t}} \end{bmatrix}
-\end{align}
-
-and we can further stack daily vectors:
-
-\begin{align}
-	R = \begin{bmatrix}R_{1,\cdot} \\ \vdots \\  R_{T,\cdot}	\end{bmatrix},
-	A^{(k)} = \begin{bmatrix}A^{(k)}_{1,\cdot} \\ \vdots \\  A^{(k)}_{T,\cdot}	\end{bmatrix},
-	\epsilon = \begin{bmatrix}\epsilon_{1,\cdot} \\ \vdots \\  \epsilon_{T,\cdot}	\end{bmatrix}
-\end{align}
-
-so we can rewrite \autoref{eq:return_alpha} in vector form:
-\begin{align}
-	R &= A \beta + \epsilon, \epsilon \sim \Norm(\epsilon| 0, \Sigma) \\
-	A &= \begin{bmatrix}
-		A^{(1)} \cdots A^{(k)}
-	\end{bmatrix}
-\end{align}
-
-\section{Exploting special structure of errors $\epsilon$}
-
-In practice, we can assume special structure of $\Sigma$ that let us simplify the implementation:
-\begin{itemize}
-	\item errors for different time periods are uncorrelated $cov(\epsilon_{t_1, i}, \epsilon_{t_2, j})=0$ if $t_1 \neq t_2$.
-\begin{align}
-	\label{eq:block_diagonal_sigma}
-	 \Sigma =
-\begin{bmatrix}
-	\Sigma_1 & 0 & \cdots & 0 \\
-	0 & \Sigma_2 & \cdots & 0 \\
-	\vdots & \vdots & \ddots & \vdots \\
-	0 & 0 & \cdots & \Sigma_T
-\end{bmatrix}
-\end{align}
-
-	\item errors in the same period $t$ have covariance matrix $\Sigma_t$ that has a "low-rank plus diagonal" structure 
-	
+\begin{definition}
+	\label{def:gls}
+	$\hat{\beta}^{GLS}$ is MLE estimate of $\beta$ in the Model \ref{eq:basic_model}: 
 	\begin{align}
-	\Sigma_t = L_t \Sigma^f_t L_t^T + \Lambda_t.
-	\end{align}
-\end{itemize}
+	\hat{\beta}^{GLS} = \argmax_\beta  l(\beta)
+	\end{align} 
+\end{definition}
 
-We can exploit these properties to simplify \autoref{eq:beta_mle}:
-\begin{itemize}
-	\item inverse of $\Sigma$ is
+Definition \autoref{def:gls} gives an optimization problem
 \begin{align}
-\Sigma^{-1} = \begin{bmatrix}
-	\Sigma_1^{-1} & 0 & \cdots & 0 \\
-	0 & \Sigma_2^{-1} & \cdots & 0 \\
-	\vdots & \vdots & \ddots & \vdots \\
-	0 & 0 & \cdots & \Sigma_T^{-1}
-\end{bmatrix}
-\end{align}
-\item each $\Sigma_t$ can be inverted using Woodbury inversion formula:
-\begin{align}
-	\Sigma_t^{-1} = (L_t \Sigma^f_t L_t^T + \Lambda_t)^{-1} = \Lambda_t^{-1} + \Lambda_t^{-1} L_t ((\Sigma^f_t) ^ {-1} + L^T \Lambda_t^{-1} L ) L_t^T \Lambda_t^{-1}
+	\label{eq:gls_opt_problem}
+	\maximize_{\beta} -\frac{1}{2} (y - X\beta)^T \Sigma^{-1} (y - X \beta)
 \end{align}
 
-\end{itemize}
+the first-order condition $\triangledown_{\beta} l(\beta) = 0$ gives \textit{normalized equations}:
 
-Thus computation \autoref{eq:beta_mle} reduces to:
+\begin{align*}
+	X^T \Sigma^{-1} X \beta = X^T \Sigma^{-1} y 
+\end{align*}
 
+Solution to the Problem \ref{eq:gls_opt_problem} can be written as
 \begin{align}
-	\beta^{GLS} = (\sum_{t=1}^T )^{-1}
+	\hat{\beta}^{GLS} = (X^T \Sigma^{-1} X)^{\dagger} X^T \Sigma^{-1} y 
 \end{align}
+
+\subsection{Comparison to OLS}
+Looking at \autoref{eq:gls_opt_problem} one can note that GLS is equivalent to OLS if data $D=(X, y)$ is preprocessed. For example, using Cholesky decomposition $\Sigma = L L^T  $ we can lef-tmultiply the equation by $L^{-1}$:
+\begin{align}
+	y' &= X' \beta + \eps' \\
+	y' &= L^{-1} y, X' = L^{-1} X \notag \\
+	\eps' &= L^{-1} \eps \sim N(\eps' | 0, I) \notag
+\end{align}
+
+and the Problem \ref{eq:gls_opt_problem} reduces to the usual OLS problem: 
+\begin{align}
+	\label{eq:gls_opt_problem}
+	\maximize_{\beta} -\frac{1}{2} (y' - X\beta)^T  (y' - X' \beta)  \Leftrightarrow \minimize_{\beta} \frac{1}{2} \norm{y' - X' \beta}_2^2
+\end{align}
+
+\subsection{Extensions}
+One can extend the basic model by considering coefficient vector $\beta$ as random and introducing prior distribution\footnote{Equivalently, introduce regularization terms directly into Problem \ref{eq:gls_opt_problem}.}.
+
+If $f(\beta) \propto const$ we get same model as above
+
+
+
+
 

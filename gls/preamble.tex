@@ -9,6 +9,7 @@
 
 \usepackage{graphicx}
 \usepackage{xcolor}           % adds \textcolor
+\usepackage{colortbl}
 \usepackage{subcaption}
 \usepackage{hyperref}         % adds \autoref
 
@@ -30,6 +31,13 @@
 	top=20mm,
 }
 
+
+%%%%%%%%%%%%%%%
+%% Aliases %%
+%%%%%%%%%%%%%%%
+\newcommand{\eps}{\epsilon}
+
+
 %%%%%%%%%%
 %% Sets %%
 %%%%%%%%%%
@@ -39,6 +47,8 @@
 \newcommand{\Zplus}{\mathbb{Z}_{+}}
 \newcommand{\Rplus}{\mathbb{R}_{+}}
 \newcommand{\Rplusplus}{\mathbb{R}_{++}}
+\newcommand{\MatricesPSD}{\mathbb{S}_{+}}
+\newcommand{\MatricesPD}{\mathbb{S}_{++}}
 
 %%%%%%%%%%%%%
 %% Vectors %%
@@ -54,6 +64,9 @@
 %%%%%%%%%%%%%%%%%%
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\maximize}{maximize}
+\DeclareMathOperator*{\minimize}{minimize}
+
 
 %%%%%%%%%%%%%% %%
 %% Probability %%
@@ -65,3 +78,18 @@
 \newcommand{\Gaussian}{\mathcal{N}}
 
 %\DeclareMathOperator{\Prob}{\mathbb{P}}  % expected value
+
+
+%%%%%%%%%%%%%%%%
+%% Complexity %%
+%%%%%%%%%%%%%%%%
+\newcommand{\bigO}{\mathcal{O}}
+
+
+%%%%%%%%%%%%%%%%%%
+%% Environments %%
+%%%%%%%%%%%%%%%%%%
+
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
