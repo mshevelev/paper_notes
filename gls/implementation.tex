@@ -1,0 +1,96 @@
+\section{Implementation for multi-variate return time series}
+Consider the problem 
+\begin{align}\label{eq:return_alpha}
+	R_{t,i} &= \sum_{k=1}^K \beta_k A^{(k)}_{t,i} + \epsilon_{t,i}, \\
+	(t,i) \in &\{(1, i_{1,1}),...,(1, i_{1, N_1}),\notag\\
+	&\phantom{\in\ }\cdots\notag\\
+	&\phantom{\in\ }(T, i_{T,1}),...,(T, i_{T, N_T})\} \notag
+\end{align}
+
+In the above:
+\begin{itemize}
+	\item $R_{t,i}$ are returns for stock $i$ over period $t$;
+	\item $A^{(k)}_{t,i}$ are features, for example, alpha vectors, their lags, subuniverses, etc.
+\end{itemize} 
+
+Note that indices are 2-dimensional, but not necessarily rectangular, i.e. set of on different days stock indices can be different. For notation convenience we introduce daily (random) vectors where we put all variables with same index $t$ in a column\footnote{note that dimensions for vectors with different index $t$ might be different}:
+
+\begin{align}
+	R_{t,\cdot} = \begin{bmatrix}R_{t,i_{t,1}} \\ \vdots \\  R_{t,i_{t, N_t}} \end{bmatrix},
+	A^{(k)}_{t,\cdot} = \begin{bmatrix}A^{(k)}_{t,i_{t,1}} \\ \vdots \\  A^{(k)}_{t,i_{t, N_t}} \end{bmatrix},
+	\epsilon_{t,\cdot} = \begin{bmatrix}\epsilon_{t,i_{t,1}} \\ \vdots \\  \epsilon_{t,i_{t, N_t}} \end{bmatrix}
+\end{align}
+
+and we can further stack daily vectors:
+
+\begin{align}
+	\label{eq:stacked_variables}
+	R = \begin{bmatrix}R_{1,\cdot} \\ \vdots \\  R_{T,\cdot}	\end{bmatrix},
+	A^{(k)} = \begin{bmatrix}A^{(k)}_{1,\cdot} \\ \vdots \\  A^{(k)}_{T,\cdot}	\end{bmatrix},
+	\epsilon = \begin{bmatrix}\epsilon_{1,\cdot} \\ \vdots \\  \epsilon_{T,\cdot}	\end{bmatrix}
+\end{align}
+
+so we can rewrite \autoref{eq:return_alpha} in vector form:
+\begin{align}
+	R &= A \beta + \epsilon, \epsilon \sim \Norm(\epsilon| 0, \Sigma) \\
+	A &= \begin{bmatrix}
+		A^{(1)} \cdots A^{(k)}
+	\end{bmatrix}
+\end{align}
+
+\section{Exploting special structure of $\Sigma$}
+
+In practice, we can assume special structure of $\Sigma$ that allows simplified implementation of \autoref{eq:beta_mle}. 
+
+\subsection{No autocorrelation of errors}
+It is reasonable to assume that errors for different time periods don't correlate $cov(\epsilon_{t_1, i}, \epsilon_{t_2, j})=0$ if $t_1 \neq t_2$, thus.
+\begin{align}
+	\Sigma =
+	\begin{bmatrix}
+		\Sigma_1 & 0 & \cdots & 0 \\
+		0 & \Sigma_2 & \cdots & 0 \\
+		\vdots & \vdots & \ddots & \vdots \\
+		0 & 0 & \cdots & \Sigma_T
+	\end{bmatrix}
+	\label{eq:block_diagonal_sigma}
+\end{align}
+
+Inversion of block diagonal matrix is simple:
+
+\begin{align}
+	\label{eq:block_diagonal_inversion}
+	\Sigma^{-1} = \begin{bmatrix}
+		\Sigma_1^{-1} & 0 & \cdots & 0 \\
+		0 & \Sigma_2^{-1} & \cdots & 0 \\
+		\vdots & \vdots & \ddots & \vdots \\
+		0 & 0 & \cdots & \Sigma_T^{-1}
+	\end{bmatrix}
+\end{align}
+
+Plugging \autoref{eq:stacked_variables} into \autoref{eq:beta_mle} and using \autoref{eq:block_diagonal_inversion} translates into:
+\begin{align}
+	\label{eq:beta_mle}
+	\hat{\beta}^{GLS} = \sum_{t=1}^T (X^T \Sigma^{-1} X)^{-1} X^T \Sigma^{-1} y
+\end{align}
+
+
+\subsection{Factor structure of errors in the same period}
+
+errors in the same period $t$ have covariance matrix $\Sigma_t$ that has a "low-rank plus diagonal" structure 
+
+\begin{align}
+	\Sigma_t = L_t \Sigma^f_t L_t^T + \Lambda_t.
+\end{align}
+
+
+each $\Sigma_t$ can be inverted using Woodbury inversion formula:
+\begin{align}
+	\Sigma_t^{-1} = (L_t \Sigma^f_t L_t^T + \Lambda_t)^{-1} = \Lambda_t^{-1} + \Lambda_t^{-1} L_t ((\Sigma^f_t) ^ {-1} + L^T \Lambda_t^{-1} L ) L_t^T \Lambda_t^{-1}
+\end{align}
+
+
+Thus computation \autoref{eq:beta_mle} reduces to:
+
+\begin{align}
+	\beta^{GLS} = \left(\sum_{t=1}^T {A_{t,\cdot}} ^ T \Sigma_t^{-1} A_{t,\cdot} \right) ^{-1}
+\end{align}
