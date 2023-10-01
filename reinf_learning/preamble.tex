@@ -1,0 +1,116 @@
+\documentclass[a4paper, 11pt]{article}
+
+\usepackage{amssymb, amsmath, amsfonts}
+%\usepackage[english, russian]{babel}
+\usepackage[english]{babel}
+
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+
+\usepackage{graphicx}
+\usepackage{xcolor}           % adds \textcolor
+\usepackage{colortbl}
+\usepackage{subcaption}
+\usepackage{hyperref}         % adds \autoref
+
+
+\usepackage{indentfirst} % to indent first paragraph in section
+\usepackage{enumitem}   % allows paramters to \begin{itemize}[label=--]
+% \usepackage{nicematrix}
+
+\usepackage{todonotes}
+
+
+%% page geometry
+\linespread{1}
+
+\usepackage{geometry}
+\geometry{
+	a4paper,
+	left=20mm,
+	top=20mm,
+}
+
+%% vertical space between items in itemize
+\setlist[itemize]{itemsep=-2pt}
+
+
+
+
+%%%%%%%%%%%
+%% Boxes %%
+%%%%%%%%%%%
+%\newcommand{\mybox}[1]{\fbox{#1}}
+\newcommand{\boxedtext}[1]{\fbox{\begin{minipage}{\linewidth}#1\end{minipage}}}
+
+
+
+%%%%%%%%%%%
+%% Fonts %%
+%%%%%%%%%%%
+\newcommand{\red}[1]{\textcolor{red}{#1}}
+\newcommand{\orange}[1]{\textcolor{orange}{#1}}
+\newcommand{\green}[1]{\textcolor{green}{#1}}
+
+
+%%%%%%%%%%%%%%%
+%% Aliases %%
+%%%%%%%%%%%%%%%
+\newcommand{\eps}{\epsilon}
+
+
+%%%%%%%%%%
+%% Sets %%
+%%%%%%%%%%
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Zplus}{\mathbb{Z}_{+}}
+\newcommand{\Rplus}{\mathbb{R}_{+}}
+\newcommand{\Rplusplus}{\mathbb{R}_{++}}
+\newcommand{\MatricesPSD}{\mathbb{S}_{+}}
+\newcommand{\MatricesPD}{\mathbb{S}_{++}}
+
+%%%%%%%%%%%%%
+%% Vectors %%
+%%%%%%%%%%%%%
+\newcommand{\vecone}{\textbf{1}}
+\newcommand{\norm}[1]{ \left\| #1 \right\| }
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+%% Optimization %%
+%%%%%%%%%%%%%%%%%%
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\maximize}{maximize}
+\DeclareMathOperator*{\minimize}{minimize}
+
+
+%%%%%%%%%%%%%% %%
+%% Probability %%
+%%%%%%%%%%%%%%%%%
+\DeclareMathOperator{\EX}{\mathbb{E}}      % expected value
+\DeclareMathOperator*{\Cov}{\mathbb{C}ov\mathbb{M}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\Norm}{\mathcal{N}}
+\newcommand{\Gaussian}{\mathcal{N}}
+
+%\DeclareMathOperator{\Prob}{\mathbb{P}}  % expected value
+
+
+%%%%%%%%%%%%%%%%
+%% Complexity %%
+%%%%%%%%%%%%%%%%
+\newcommand{\bigO}{\mathcal{O}}
+
+
+%%%%%%%%%%%%%%%%%%
+%% Environments %%
+%%%%%%%%%%%%%%%%%%
+
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}

@@ -1,0 +1,36 @@
+\section{MDP}
+
+A \textcolor{red}{reward} $R_t$ is a scalar feedback signal: indicates how well agent is doing at step $t$.
+
+\textcolor{orange}{The agent’s job is to select \underline{actions} to maximize (expected) cumulative reward!!}
+\begin{itemize}
+	\item Actions may have long term consequences;
+	\item Rewards may be delayed;
+	\item It may be better to sacrifice immediate reward to gain more long-term reward.
+\end{itemize}
+
+The \textcolor{red}{agent state} $S^a_t$ is the agent's internal representation, i.e. whatever information it uses to pick the next action. Formally, state is a function of the history $S^a_t = f(H_t)$, where $H_t = O_1, R_1, A_1, ..., A_{t-1}, O_{t}, R_{t}$, i.e. all observable variables up to time $t$.
+
+An \textcolor{red}{agent state} (a.k.a. \textcolor{red}{Markov state}) contains all useful information from the history. $S_t$ is Markov iff 
+\begin{align*}
+\Prob [S_{t+1}|S_t]	= \Prob[S_{t+1}| S_t, S_{t-1}, ... S_1]
+\end{align*}
+\begin{itemize}
+	\item The future is independent of the past, given present.
+	\item once the state is known the history can be thrown away.
+	\item The state is sufficient statistics of the history.
+\end{itemize}
+
+
+(???) POMDP (partially observable) vs MDP
+
+
+\boxedtext{
+An \textcolor{red}{RL agent} may include one or more of these components:
+\begin{itemize}
+	\item \red{Policy}: agent’s behavior function
+	\item \red{Value function}: how good is each state and/or action
+	\item \red{Model}: agent’s representation of the environment
+\end{itemize}
+}
+
