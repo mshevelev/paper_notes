@@ -48,4 +48,48 @@ An \textcolor{red}{RL agent} may include one or more of these components:
 \end{itemize}
 }
 
+\subsection{Taxonomy of RL agent}
+\begin{itemize}
+	\item \red{Value Based}: 
+	\begin{itemize}
+		\item no \underline{explicit} policy;
+		\item value function;
+		\item $\pi(s) = \argmax_{a \in A} \E_{s'|s,a} V(s')$.
+	\end{itemize}
+	\item \red{Policy Based}:
+	\begin{itemize}
+		\item Policy;
+		\item no value function;
+	\end{itemize}
+	\item Actor Critic (to be discussed later)
+\end{itemize}
 
+
+\red{Model Free} vs \red{Model Based}. Reminder: Model = attempt to understand the environment.
+
+\subsection{RL vs Planning}
+\begin{itemize}
+	\item \red{Reinforcement learning}
+	\begin{itemize}
+		\item The environment is initially unknown
+		\item but agent improves the policy by interacting with environment
+	\end{itemize}
+	\item \red{Planning}
+	\begin{itemize}
+		\item The model of the environment is (fully) known
+		\item agent interacts with this model (emulator of reality/environment) without external interaction;
+		\item agent improves policy from only interaction with the model/emulator.
+	\end{itemize}
+\end{itemize}
+
+These are different formulations, but of course related, as one way to solve RL problem is to learn model of environment first then do planning.
+
+RL is like trial-and-error learning 
+
+\subsection{Prediction vs Control}
+\begin{itemize}
+	\item \red{Prediction}: evaluate the future. Given fixed policy, evaluate value function.
+	\item \red{Control}: optimize the future, i.e. find the best policy.
+\end{itemize}
+
+Usually we need to solve Prediction problem to solve control problem. We need to be able to \underline{evaluate} all of our policies in order to \underline{find the best one}.
