@@ -1,95 +1,62 @@
-\section{MDP}
+\section{Markov-Decision Process}
 
-A \textcolor{red}{reward} $R_t$ is a scalar feedback signal: indicates how well agent is doing at step $t$.
+\orange{MDP formally describes environment, where environment is fully observable}
 
-\textcolor{orange}{The agent’s job is to select \underline{actions} to maximize (expected) cumulative reward!!}
+I.e. current state completely characterizes that process, how the process unfolds.
+
+Almost all RL problems can be formalized as MDPs:
 \begin{itemize}
-	\item Actions may have long term consequences;
-	\item Rewards may be delayed;
-	\item It may be better to sacrifice immediate reward to gain more long-term reward.
+	\item Optimal control primarily deals with continuous MDPs (with continuous actions).
+	\item POMDP can be converted to MDP	.
+	\item \textit{Bandits} are MDPs with one state.
 \end{itemize}
 
-The \red{environment state} $S^e_t$ is the environment's internal representation, i.e. whatever it uses to generate next observation and reward. Usually not visible to an agent.
+Idea: Markov process (chains) $\to$ Markov Reward Process (+reward function) $\to$ Markov Decision Process (+actions)
 
-The \red{agent state} $S^a_t$ is the agent's internal representation, i.e. whatever information it uses to pick the next action. Formally, state is a function of the history $S^a_t = f(H_t)$, where $H_t = O_1, R_1, A_1, ..., A_{t-1}, O_{t}, R_{t}$, i.e. all observable variables up to time $t$.
+\subsection{Markov Process}
 
-An \red{information state} (a.k.a. \textcolor{red}{Markov state}) contains all useful information from the history. $S_t$ is Markov iff
-\begin{align*}
-\Prob [S_{t+1}|S_t]	= \Prob[S_{t+1}| S_t, S_{t-1}, ... S_1]
-\end{align*}
+\red{Markov Property}: future is independent of the past given present.
+
+\begin{align}
+	\Prob[S_{t+1} | S_t] = 	\Prob[S_{t+1} | S_t, S_{t-1}, ..., S_{0}]
+\end{align}
+
+It means that we can define a \red{state-transition probability matrix}
+\begin{align}
+	\mathcal{P}_{ss'} = \Prob[S_{t+1} = s' | S_t = s]
+\end{align}
+
+\red{Markov Process (Markov Chain)} is a memory-less process defined as a tuple $(\mathcal{S}, \mathcal{P})$:
 \begin{itemize}
-	\item The future is independent of the past, given present.
-	\item once the state is known the history can be thrown away.
-	\item The state is sufficient statistics of the history.
+	\item $\mathcal{S}$ is a (finite) set of states;
+	\item $\mathcal{P}$ is state transition probability matrix.
 \end{itemize}
 
+This fully defines dynamics of the system.
 
-(???) POMDP (partially observable) vs MDP
+Note: What to do if probability matrix change in time? Non-stationary Markov process (or non-stationary MDP in general).
+\begin{enumerate}
+	\item  You can use the same algorithms we use in the stationary case but incrementally adjust your solution to track the best solution you've found so far.
+	\item or you can reduce non-stationary dynamics to a more complex Markov process\footnote{see 12:00 of the video with Facebook example, where probability of staying on Facebook reduces with time or number of visits}
+\end{enumerate}
 
-
-\boxedtext{
-An \textcolor{red}{RL agent} may include one or more of these components:
+\subsection{Markov Reward Process}
+	
+\red{Markov Reward Process} is a Markov chain with values defined as a tuple $(\mathcal{S}, \mathcal{P}, \red{\mathcal{R}, \mathcal{\gamma}})$:
 \begin{itemize}
-	\item \red{Policy}: agent’s behavior function
+	\item $\mathcal{R}$ is a \emph{reward function}: $\mathcal{R}_s = \E[R_{t+1} | S_t = s]$
 	\begin{itemize}
-		\item map from state to action
-		\item \red{deterministic}: $a = \pi(s)$
-		\item \red{stochastic(probabilistic)}: $\pi(a|s) = \Prob[A_t=a|S_t=s]$
+		\item how much (expected\footnote{according to model??}) reward do I get from simply being in that state;
 	\end{itemize}
-	\item \red{Value function}: how good is each state and/or action
-	\begin{itemize}
-		\item prediction of future reward: $v_{\pi}(s) = \EX_\pi[R_{t+1}+\gamma R_{t+2} + \gamma^2 R_{t+3} + ... | S_t = s]$
-	\end{itemize}
-	\item \red{Model}: agent’s representation of the environment (what the environment will do next)
-	\begin{itemize}
-			\item \red{dynamics}: $\mathcal{P}_{ss'}^a = \Prob[S_{t+1} = s' | S_t = s, A_t = a] $ models distribution of the next state
-			\item \red{rewards}: $\mathcal{R}_s^a = \E_\pi[R_{t+1} | S_t = s, A_t = a] $ models the next immediate reward
-	\end{itemize}
+	\item $\gamma$ is a \emph{discount factor} $\gamma \in [0, 1]$
 \end{itemize}
-}
+\emph{Reward function} allows us to value judge how much reward I accumulate across a particular sequence sampled from this Markov process.
 
-\subsection{Taxonomy of RL agent}
-\begin{itemize}
-	\item \red{Value Based}: 
-	\begin{itemize}
-		\item no \underline{explicit} policy;
-		\item value function;
-		\item $\pi(s) = \argmax_{a \in A} \E_{s'|s,a} V(s')$.
-	\end{itemize}
-	\item \red{Policy Based}:
-	\begin{itemize}
-		\item Policy;
-		\item no value function;
-	\end{itemize}
-	\item Actor Critic (to be discussed later)
-\end{itemize}
+The \red{return $G_t$} is the total discounted reward from time-step $t$ (\underline{across entire chain}).
+\begin{align}
+	G_t = R_{t+1}+ \gamma R_{t+2} + \gamma^2 R_{t+3} ... = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}
+\end{align}
 
-
-\red{Model Free} vs \red{Model Based}. Reminder: Model = attempt to understand the environment.
-
-\subsection{RL vs Planning}
-\begin{itemize}
-	\item \red{Reinforcement learning}
-	\begin{itemize}
-		\item The environment is initially unknown
-		\item but agent improves the policy by interacting with environment
-	\end{itemize}
-	\item \red{Planning}
-	\begin{itemize}
-		\item The model of the environment is (fully) known
-		\item agent interacts with this model (emulator of reality/environment) without external interaction;
-		\item agent improves policy from only interaction with the model/emulator.
-	\end{itemize}
-\end{itemize}
-
-These are different formulations, but of course related, as one way to solve RL problem is to learn model of environment first then do planning.
-
-RL is like trial-and-error learning 
-
-\subsection{Prediction vs Control}
-\begin{itemize}
-	\item \red{Prediction}: evaluate the future. Given fixed policy, evaluate value function.
-	\item \red{Control}: optimize the future, i.e. find the best policy.
-\end{itemize}
-
-Usually we need to solve Prediction problem to solve control problem. We need to be able to \underline{evaluate} all of our policies in order to \underline{find the best one}.
+\begin{mynote}
+	\orange{$\gamma$ helps to define $G_t$ to converge to finite!!} Myopic ($\gamma=0$ vs far-sighted ($\gamma=1$). \orange{We introduce a judgement here: we prefer short-term reward to delayed reward and amount is given by $\gamma$}
+\end{mynote}

@@ -120,3 +120,12 @@
 \usepackage{amsthm}
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
+
+\newenvironment{mynote}
+{
+	\par\medskip
+	\noindent\textbf{Note.}\quad\begin{minipage}{0.9\linewidth}\itshape
+	}
+	{
+	\end{minipage}\par\medskip
+}
