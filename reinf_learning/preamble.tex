@@ -12,7 +12,7 @@
 \usepackage{colortbl}
 \usepackage{subcaption}
 \usepackage{hyperref}         % adds \autoref
-
+\usepackage{cancel}
 
 \usepackage{indentfirst} % to indent first paragraph in section
 \usepackage{enumitem}   % allows paramters to \begin{itemize}[label=--]
@@ -37,6 +37,19 @@
 \setlist[itemize,1]{label=$\bullet$}
 \setlist[itemize,2]{label=$\circ$}
 \setlist[itemize,3]{label=$\diamond$}
+
+\usepackage{tcolorbox}
+
+\newtcolorbox{notebox}{
+	colback=gray!10!white,
+	colframe=gray!50!black,
+	boxsep=5pt,
+	arc=4pt,
+	left=6pt,
+	right=6pt,
+	fonttitle=\bfseries,
+	title=Note
+}
 
 
 

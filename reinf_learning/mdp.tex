@@ -11,7 +11,16 @@ Almost all RL problems can be formalized as MDPs:
 	\item \textit{Bandits} are MDPs with one state.
 \end{itemize}
 
-Idea: Markov process (chains) $\to$ Markov Reward Process (+reward function) $\to$ Markov Decision Process (+actions)
+
+\boxedtext{
+$$
+	 \underset{\text{State chain}}{\text{Markov process}}
+	 \to 
+	 \underset{\text{+reward function}}{\text{Markov Reward Process}} 
+	 \to
+	 \underset{\text{+actions}}{\text{Markov Decision Process}}
+$$
+}
 
 \subsection{Markov Process}
 
@@ -34,15 +43,20 @@ It means that we can define a \red{state-transition probability matrix}
 
 This fully defines dynamics of the system.
 
-Note: What to do if probability matrix change in time? Non-stationary Markov process (or non-stationary MDP in general).
+\begin{notebox}
+What to do if probability matrix change in time? Non-stationary Markov process (or non-stationary MDP in general).
+
+
 \begin{enumerate}
 	\item  You can use the same algorithms we use in the stationary case but incrementally adjust your solution to track the best solution you've found so far.
 	\item or you can reduce non-stationary dynamics to a more complex Markov process\footnote{see 12:00 of the video with Facebook example, where probability of staying on Facebook reduces with time or number of visits}
 \end{enumerate}
+\end{notebox}
+
 
 \subsection{Markov Reward Process}
 	
-\red{Markov Reward Process} is a Markov chain with values defined as a tuple $(\mathcal{S}, \mathcal{P}, \red{\mathcal{R}, \mathcal{\gamma}})$:
+\red{Markov Reward Process (MRP)} is a Markov chain with values defined as a tuple $(\mathcal{S}, \mathcal{P}, \red{\mathcal{R}, \mathcal{\gamma}})$:
 \begin{itemize}
 	\item $\mathcal{R}$ is a \emph{reward function}: $\mathcal{R}_s = \E[R_{t+1} | S_t = s]$
 	\begin{itemize}
@@ -50,13 +64,108 @@ Note: What to do if probability matrix change in time? Non-stationary Markov pro
 	\end{itemize}
 	\item $\gamma$ is a \emph{discount factor} $\gamma \in [0, 1]$
 \end{itemize}
-\emph{Reward function} allows us to value judge how much reward I accumulate across a particular sequence sampled from this Markov process.
+\emph{Reward function} allows us to value how much reward I accumulate \textit{across a particular sequence} sampled from this Markov process.
 
 The \red{return $G_t$} is the total discounted reward from time-step $t$ (\underline{across entire chain}).
 \begin{align}
 	G_t = R_{t+1}+ \gamma R_{t+2} + \gamma^2 R_{t+3} ... = \sum_{k=0}^{\infty} \gamma^k R_{t+k+1}
 \end{align}
 
-\begin{mynote}
-	\orange{$\gamma$ helps to define $G_t$ to converge to finite!!} Myopic ($\gamma=0$ vs far-sighted ($\gamma=1$). \orange{We introduce a judgement here: we prefer short-term reward to delayed reward and amount is given by $\gamma$}
-\end{mynote}
+\begin{notebox}
+Why use discount factor $\gamma$?
+\begin{itemize}
+	\item admit the fact that our model is imperfect, hence future is more uncertain than present;
+	\begin{itemize}
+		\item we build Markov Reward process to represent environment, but it is imperfect model of the environment;
+		\item if we build a long plan that says I have to wait for many steps before collecting a large reward, I have to really trust my model and really believe that things will turn out as I plan to wait for so long...
+	\end{itemize} 
+	\item \orange{$\gamma$ helps to define $G_t$ to converge to finite!!}
+	\begin{itemize}
+		\item avoids infinite returns $G$ in cyclic Markov processes;
+		\item makes sure there is no infinite evaluation of a state.
+	\end{itemize}
+	\item \textit{Myopic} ($\gamma=0$) vs \textit{far-sighted} ($\gamma=1$)
+	\begin{itemize}
+		\item we introduce a judgement here - we prefer a short-term reward to delayed reward and amount is given by $\gamma$.
+	\end{itemize}
+	\item if the reward is financial, then money now worth more than money later (interest);
+	\item \orange{it is sometimes possible to use \textit{undiscounted} ($\gamma=1$) MRPs, e.g. if we know that all sequences terminate.}
+	\begin{itemize}
+		\item approach: average reward formulation
+	\end{itemize}
+\end{itemize}
+\end{notebox}
+
+\subsubsection{Value Function and Bellman Equation for MRPs}
+
+\red{Value Function} $v(s)$ gives long-term value of a state $s$
+\begin{align}
+	v(s) = \E[G_t | S_t = s]
+\end{align}
+\begin{itemize}
+	\item If I drop you into the state $s$ of this MRP, what is the expected total reward I am going to collect?
+	\item We use expectation, because environment is stochastic.
+\end{itemize}
+
+\boxedtext{
+The value function can be decomposed into two parts:
+\begin{itemize}
+	\item immediate reward $R_{t+1}$;
+	\item discounted value of successor state $\gamma v(S_{t+1})$.
+\end{itemize}
+
+\begin{align*}
+	v(s) &= \E[G_t | S_t = s] \\
+	     &= \E[R_{t+1} + \underbrace{\gamma R_{t+2} + \gamma^2 R_{t+3} + ...}_{\gamma G_{t+1}} | S_t = s ] \\
+	     &= \E[R_{t+1} | S_t = s] + \gamma \E[\underbrace{\E[G_{t+1}|S_{t+1} = s', \cancel{S_t = s}]}_{v(s')} | S_t = s] \\
+	     &= \E[R_{t+1} | S_t = s] + \gamma \E[v(S_{t+1}) | S_t = s]
+\end{align*}
+}
+
+Bellman equation is a tautological definition of value function and can be though as a \red{one step look-ahead search} (backup diagram).
+
+\begin{align*}
+	v(s) & = \E[R_{t+1} + \gamma v(s)| S_t = s] \\
+	     & \Updownarrow \\
+	v(s) & = \mathcal{R}_s + \gamma \sum_{s' \in \mathcal{S}} \mathcal{P}_{s s'} v(s') \\
+\end{align*}
+
+\boxedtext{
+In matrix form
+
+\begin{align}
+	v &= \mathcal{R} + \gamma \mathcal{P} v \\
+	\statevector &= \rewardvector + \gamma \probmatrix \statevector \nonumber
+\end{align}
+
+It is a linear equation and can be solved directly
+\begin{align}
+	v = (I - \gamma \mathcal{P})^{-1} \mathcal{R}
+\end{align}
+
+\begin{itemize}
+	\item Complexity is $\bigO(n^3)$, so can only be solved for small problems.
+	\item For larger problems there are other methods
+	\begin{itemize}
+		\item Dynamic programming;
+		\item Monte-Carlo evaluation;
+		\item Temporal-Difference learning.
+	\end{itemize}
+\end{itemize}
+}
+
+\subsection{Markov Decision Process (MDP)}
+\orange{This is the thing we are actually solving in RL}
+
+MDP = MRP + actions
+
+\boxedtext{
+\red{Markov Decision Process (MDP)} is a tuple $(\States, \red{\Actions}, \TransitionProb, \Reward, \gamma)$
+\begin{itemize}
+	\item $\States$ is a finite set of states;
+	\item \red{$\Actions$ is a finite set of actions;}
+	\item $\TransitionProb$ is a state transition prob matrix (\red{may depend on action})  $$\TransitionProb_{ss'}^{\red{a}} = \Prob[S_{t+1} = s' | S_t = s, A_t = \red{a}]$$
+	\item $\Reward$ is a reward function (\red{may depend on action}): $$R_s^{\red{a}} = \E[R_{t+1} | S_t = s, A_t = \red{a}]$$
+	\item $\gamma$ is a discount factor.
+\end{itemize}
+}
