@@ -22,7 +22,7 @@ $$
 $$
 }
 
-\subsection{Markov Process}
+\subsection{Markov Process (MP)}
 
 \red{Markov Property}: future is independent of the past given present.
 
@@ -35,13 +35,16 @@ It means that we can define a \red{state-transition probability matrix}
 	\mathcal{P}_{ss'} = \Prob[S_{t+1} = s' | S_t = s]
 \end{align}
 
-\red{Markov Process (Markov Chain)} is a memory-less process defined as a tuple $(\mathcal{S}, \mathcal{P})$:
+\boxedtext{
+\red{Markov Process (Markov Chain)} is a memory-less process defined as a tuple $\MP=(\mathcal{S}, \mathcal{P})$:
 \begin{itemize}
 	\item $\mathcal{S}$ is a (finite) set of states;
 	\item $\mathcal{P}$ is state transition probability matrix.
 \end{itemize}
 
 This fully defines dynamics of the system.
+}
+
 
 \begin{notebox}
 What to do if probability matrix change in time? Non-stationary Markov process (or non-stationary MDP in general).
@@ -55,8 +58,9 @@ What to do if probability matrix change in time? Non-stationary Markov process (
 
 
 \subsection{Markov Reward Process}
-	
-\red{Markov Reward Process (MRP)} is a Markov chain with values defined as a tuple $(\mathcal{S}, \mathcal{P}, \red{\mathcal{R}, \mathcal{\gamma}})$:
+
+\boxedtext{
+\red{Markov Reward Process (MRP)} is a Markov chain with values defined as a tuple $\MRP = (\mathcal{S}, \mathcal{P}, \red{\mathcal{R}, \mathcal{\gamma}})$:
 \begin{itemize}
 	\item $\mathcal{R}$ is a \emph{reward function}: $\mathcal{R}_s = \E[R_{t+1} | S_t = s]$
 	\begin{itemize}
@@ -65,6 +69,7 @@ What to do if probability matrix change in time? Non-stationary Markov process (
 	\item $\gamma$ is a \emph{discount factor} $\gamma \in [0, 1]$
 \end{itemize}
 \emph{Reward function} allows us to value how much reward I accumulate \textit{across a particular sequence} sampled from this Markov process.
+}
 
 The \red{return $G_t$} is the total discounted reward from time-step $t$ (\underline{across entire chain}).
 \begin{align}
@@ -76,12 +81,12 @@ Why use discount factor $\gamma$?
 \begin{itemize}
 	\item admit the fact that our model is imperfect, hence future is more uncertain than present;
 	\begin{itemize}
-		\item we build Markov Reward process to represent environment, but it is imperfect model of the environment;
+		\item we build $\MRP$ to represent environment, but it is imperfect model of the environment;
 		\item if we build a long plan that says I have to wait for many steps before collecting a large reward, I have to really trust my model and really believe that things will turn out as I plan to wait for so long...
 	\end{itemize} 
 	\item \orange{$\gamma$ helps to define $G_t$ to converge to finite!!}
 	\begin{itemize}
-		\item avoids infinite returns $G$ in cyclic Markov processes;
+		\item avoids infinite returns $G$ in cyclic $\MRP$;
 		\item makes sure there is no infinite evaluation of a state.
 	\end{itemize}
 	\item \textit{Myopic} ($\gamma=0$) vs \textit{far-sighted} ($\gamma=1$)
@@ -122,7 +127,11 @@ The value function can be decomposed into two parts:
 \end{align*}
 }
 
-Bellman equation is a tautological definition of value function and can be though as a \red{one step look-ahead search} (backup diagram).
+\begin{notebox}
+	Why immediate reward when we exit state $S_t$ is $R_{t+1}$? That's just a convention about when tick-counter gets updated. In this convention tick is updated at when environment takes control and emits reward and observation.
+\end{notebox}
+
+\red{Bellman equation} is a tautological definition of value function and can be though as a \red{one step look-ahead search} (backup diagram).
 
 \begin{align*}
 	v(s) & = \E[R_{t+1} + \gamma v(s)| S_t = s] \\
@@ -160,7 +169,7 @@ It is a linear equation and can be solved directly
 MDP = MRP + actions
 
 \boxedtext{
-\red{Markov Decision Process (MDP)} is a tuple $(\States, \red{\Actions}, \TransitionProb, \Reward, \gamma)$
+\red{Markov Decision Process (MDP)} is a tuple $\red{\MDP}=(\States, \red{\Actions}, \TransitionProb, \Reward, \gamma)$
 \begin{itemize}
 	\item $\States$ is a finite set of states;
 	\item \red{$\Actions$ is a finite set of actions;}
@@ -168,4 +177,36 @@ MDP = MRP + actions
 	\item $\Reward$ is a reward function (\red{may depend on action}): $$R_s^{\red{a}} = \E[R_{t+1} | S_t = s, A_t = \red{a}]$$
 	\item $\gamma$ is a discount factor.
 \end{itemize}
+
+\orange{There is much more control now for agent to control the path over the states (\red{agency})}
+
+}
+
+\boxedtext{
+A (stochastic) \red{policy} is a distribution over actions given state
+\begin{align}
+	\pi(a|s) = \Prob[A_t=a | S_t = s]
+\end{align}
+\begin{itemize}
+	\item \orange{This is something that agent controls!}
+	\item A policy fully defines \textit{behavior} of an agent;
+	\item it is convenient to make it stochastic to later introduce \textit{exploration}.
+	\item \red{Markov property}: in MDP, policy depends only on the current state, not on the history\footnote{Reminder: Markov assumption says that future is fully characterized by current state}. as a result we consider \textit{stationary policies}: $\forall t: A_t \sim \pi(\cdot|s_t)$
+\end{itemize}
+}
+
+\boxedtext{
+	\textbf{Important reductions}
+	
+	If I have an $\MDP=(\States, \Actions, \TransitionProb, \Reward, \gamma)$ and a (fixed) policy $\pi(a|s)$, then
+	
+	\begin{itemize}
+		\item $MDP \to MP$: the state sequence $S_1, S_2, ...$ defines a $\MP=(\States, \red{\TransitionProb^{\pi}})$
+		\item $MDP \to MRP$: the state-reward sequence $S_1, R_2, S_2, R_3, ...$ defines a $\MRP=(\States, \red{\TransitionProb^{\pi}}, \red{\Reward^{\pi}}, \gamma)$
+	\end{itemize}
+where:
+\begin{align}
+	\red{\TransitionProb^{\pi}_{ss'}} &= \sum_{a \in\Actions} \pi(a|s) \TransitionProb_{ss'}^a\\
+	\red{\Reward^{\pi}_{s}} &= \sum_{a \in\Actions} \pi(a|s) \Reward_s^{a}	
+\end{align}
 }
