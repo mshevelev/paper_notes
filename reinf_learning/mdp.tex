@@ -58,11 +58,11 @@ What to do if probability matrix change in time? Non-stationary Markov process (
 
 
 \subsection{Markov Reward Process}
-
+\label{sec:MRP}
 \boxedtext{
 \red{Markov Reward Process (MRP)} is a Markov chain with values defined as a tuple $\MRP = (\mathcal{S}, \mathcal{P}, \red{\mathcal{R}, \mathcal{\gamma}})$:
 \begin{itemize}
-	\item $\mathcal{R}$ is a \emph{reward function}: $\mathcal{R}_s = \E[R_{t+1} | S_t = s]$
+	\item $\Reward$ is a \emph{reward function}: $\Reward_s = \E[R_{t+1} | S_t = s]$
 	\begin{itemize}
 		\item how much (expected\footnote{according to model??}) reward do I get from simply being in that state;
 	\end{itemize}
@@ -192,21 +192,56 @@ A (stochastic) \red{policy} is a distribution over actions given state
 	\item A policy fully defines \textit{behavior} of an agent;
 	\item it is convenient to make it stochastic to later introduce \textit{exploration}.
 	\item \red{Markov property}: in MDP, policy depends only on the current state, not on the history\footnote{Reminder: Markov assumption says that future is fully characterized by current state}. as a result we consider \textit{stationary policies}: $\forall t: A_t \sim \pi(\cdot|s_t)$
+	\item \red{to follow a policy $\pi$} means we sample actions from $A_t \sim \pi(a|S_t)$
 \end{itemize}
 }
+\linebreak
 
 \boxedtext{
-	\textbf{Important reductions}
+	\orange{\textbf{Important reductions}}
 	
 	If I have an $\MDP=(\States, \Actions, \TransitionProb, \Reward, \gamma)$ and a (fixed) policy $\pi(a|s)$, then
 	
 	\begin{itemize}
-		\item $MDP \to MP$: the state sequence $S_1, S_2, ...$ defines a $\MP=(\States, \red{\TransitionProb^{\pi}})$
-		\item $MDP \to MRP$: the state-reward sequence $S_1, R_2, S_2, R_3, ...$ defines a $\MRP=(\States, \red{\TransitionProb^{\pi}}, \red{\Reward^{\pi}}, \gamma)$
+		\item $MDP \to MP^{\pi}$: the state sequence $S_1, S_2, ...$ defines a $\MP^{\pi}=(\States, \red{\TransitionProb^{\pi}})$
+		\item $MDP \to MRP^{\pi}$: the state-reward sequence $S_1, R_2, S_2, R_3, ...$ defines a $\MRP^{pi}=(\States, \red{\TransitionProb^{\pi}}, \red{\Reward^{\pi}}, \gamma)$
 	\end{itemize}
-where:
+where we \orange{just average over the policy}:
 \begin{align}
-	\red{\TransitionProb^{\pi}_{ss'}} &= \sum_{a \in\Actions} \pi(a|s) \TransitionProb_{ss'}^a\\
-	\red{\Reward^{\pi}_{s}} &= \sum_{a \in\Actions} \pi(a|s) \Reward_s^{a}	
+	\red{\TransitionProb^{\pi}_{ss'}} &= \sum_{a \in\Actions} \pi(a|s) \TransitionProb_{ss'}^a \gray{ = \sum_{a \in\Actions} \Prob[A_t=a|S_t=s] \Prob[S_{t+1} = s' | S_t=s, A_t = a] }\\
+	\red{\Reward^{\pi}_{s}} &= \sum_{a \in\Actions} \pi(a|s) \Reward_s^{a}  \gray{(see \ref{sec:MRP})}
 \end{align}
 }
+
+\subsubsection{State-value and Action-value function for MDP}
+Our previous definition of value function worked for a $\MRP$, where we just flew through the states but did not have any control (agency). There is no single expectation, expectation depends on behavior we choose. We need to redefine notion of value function. We can do that if we \underline{fix the policy $\pi$}.
+
+%\boxedtext{
+The \red{\textit{state}-value function $v_\pi(s)$} of an $\MDP$ is the expected return given I start at state $s$ and then follow the policy $\pi$:
+\begin{align}
+	v_{\red{\pi}}(s) = \E_{\red{\pi}}[G_t | S_t = s]
+\end{align}
+\begin{itemize}
+	\item subscript \red{$\pi$} means that we follow the policy $\pi$ after we live the state $S_t$;
+	\item it is same as the value function of policy-induced $\MRP^{\pi}$
+	\item \orange{meaning: how good it is to be in state $s$ if we follow policy $\pi$}
+\end{itemize}
+
+The \red{\textit{action}-value function $v_\pi(s)$} of an $\MDP$ is the expected return given I start at state $s$, make action $a$ and then follow the policy $\pi$:
+\begin{align}
+	q_{\red{\pi}}(s, a) = \E_{\red{\pi}}[G_t | S_t = s, A_t=a]
+\end{align}
+\begin{itemize}
+	\item subscript \red{$\pi$} means that we follow the policy $\pi$ after we live the state $S_t$;
+	\item it is the quantity we are intuitively most interested in when optimizing action
+	\item \orange{meaning: how good it is to take action $a$ from state $s$ if we follow policy $\pi$}
+\end{itemize}
+%}
+
+\subsubsection{Bellman equation}
+Again, same idea, the value function can be decomposed into expected immediate reward plus expected value of successor state given we follow the policy $\pi$. Same works for state- and action- value functions.
+
+\begin{align}
+v_\pi(s) 	 &= \E_\pi[R_{t+1} | S_t = s] + \gamma \E_\pi[v_{\pi} (S_{t+1})| S_t = s]\\
+q_\pi(s, a)	 &= \E_\pi[R_{t+1} | S_t = s, A_t = a] + \gamma \E_\pi[ q_{\pi} (S_{t+1}, A_{t+1}) | S_t = s, A_t = a]
+\end{align}

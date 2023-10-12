@@ -1,26 +1,35 @@
 \section{Introduction}
 
-A \textcolor{red}{reward} $R_t$ is a scalar feedback signal: indicates how well agent is doing at step $t$.
-
-\textcolor{orange}{The agent’s job is to select \underline{actions} to maximize (expected) cumulative reward!!}
+\orange{No supervisor, only reward signal.}
+A \red{reward} $R_t$ is a scalar feedback signal: indicates how well agent is doing at step $t$. \orange{The agent’s job is to select \underline{actions} to maximize (expected) cumulative reward!!}
 \begin{itemize}
-	\item Actions may have long term consequences;
-	\item Rewards may be delayed;
-	\item It may be better to sacrifice immediate reward to gain more long-term reward.
+	\item actions may have long term consequences, rewards may be delayed;
+	\item time really matters: data sequential, not \iid like in supervised learning setting;
+	\item it may be better to sacrifice \textit{immediate reward} to gain more \textit{long-term reward};
+	\item agent's actions affect data it receives.
 \end{itemize}
 
-The \red{environment state} $S^e_t$ is the environment's internal representation, i.e. whatever it uses to generate next observation and reward. Usually not visible to an agent.
+\begin{notebox}
+	What if the goal is to complete a challenge in the shortest amount of time. Define reward on each step to be -1 and have a terminal state "goal completed".
+\end{notebox}
 
-The \red{agent state} $S^a_t$ is the agent's internal representation, i.e. whatever information it uses to pick the next action. Formally, state is a function of the history $S^a_t = f(H_t)$, where $H_t = O_1, R_1, A_1, ..., A_{t-1}, O_{t}, R_{t}$, i.e. all observable variables up to time $t$.
+The \red{history} is all the observed variables up to time $t$: $H_t = A_1 O_1 R_1, ..., A_t O_t R_t$. It is used by agent to generate next action. But it is not very useful since it may be enormous amount of data... Instead we use \red{state} $S_t$ which is the information used to determine what happens next. We replace the history by some concise summary that captures all the relevant information that determines what happens next.
+
+Formally, state is \underline{any} function of history: \red{$S_t = f(H_t)$}.
+
+The \red{environment state} $S^e_t$ is the environment's private internal representation, i.e. whatever it uses to generate next observation and reward. \orange{Usually not visible to an agent.} So it is rather a formalism that helps us understand what environment is, rather than build practical algorithms for agent. Agent policies cannot depend on the numbers describing environment state as they are unknown.
+
+The \red{agent state} $S^a_t$ is the agent's internal representation, i.e. whatever information it uses to pick the next action. Formally, state is a function of the history \red{$S^a_t = \underbrace{f}_{\text{our choice}}(H_t)$}, where $H_t = O_1, R_1, A_1, ..., A_{t-1}, O_{t}, R_{t}$, i.e. \underline{summary} of all observable variables up to time $t$. \orange{And it's our decision of what to remember, what to throw away and how to summarize the history!}
 
 An \red{information state} (a.k.a. \textcolor{red}{Markov state}) contains all useful information from the history. $S_t$ is Markov iff
 \begin{align*}
 \Prob [S_{t+1}|S_t]	= \Prob[S_{t+1}| S_t, S_{t-1}, ... S_1]
 \end{align*}
 \begin{itemize}
-	\item The future is independent of the past, given present.
-	\item once the state is known the history can be thrown away.
-	\item The state is sufficient statistics of the history.
+	\item The future is independent of the past, given present: $H_{1:t} \to S_t \to H_{t+1:\infty}$;
+	\item once the state is known the history can be thrown away;
+	\item The state is sufficient statistics of the future (i.e. fully characterizes the future);
+	\item when we talk about distribution of some variable in the future, conditioning on the state is the same as conditioning on the history.
 \end{itemize}
 
 
