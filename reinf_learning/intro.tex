@@ -1,5 +1,7 @@
 \section{Introduction}
 
+\subsection{Rewards, Observations, History, State}
+
 \orange{No supervisor, only reward signal.}
 A \red{reward} $R_t$ is a scalar feedback signal: indicates how well agent is doing at step $t$. \orange{The agent’s job is to select \underline{actions} to maximize (expected) cumulative reward!!}
 \begin{itemize}
@@ -13,13 +15,14 @@ A \red{reward} $R_t$ is a scalar feedback signal: indicates how well agent is do
 	What if the goal is to complete a challenge in the shortest amount of time. Define reward on each step to be -1 and have a terminal state "goal completed".
 \end{notebox}
 
-The \red{history} is all the observed variables up to time $t$: $H_t = A_1 O_1 R_1, ..., A_t O_t R_t$. It is used by agent to generate next action. But it is not very useful since it may be enormous amount of data... Instead we use \red{state} $S_t$ which is the information used to determine what happens next. We replace the history by some concise summary that captures all the relevant information that determines what happens next.
 
-Formally, state is \underline{any} function of history: \red{$S_t = f(H_t)$}.
+The \red{history} is all the observed variables up to time $t$: $H_t = O_1 A_1, R_2 O_2 A_2, ..., R_t O_t A_t$. It is used by agent to generate next action. But it may be enormous amount of data... Instead we use \red{state} $S_t$ which is the information used to model what to do next. 
 
-The \red{environment state} $S^e_t$ is the environment's private internal representation, i.e. whatever it uses to generate next observation and reward. \orange{Usually not visible to an agent.} So it is rather a formalism that helps us understand what environment is, rather than build practical algorithms for agent. Agent policies cannot depend on the numbers describing environment state as they are unknown.
+\red{State} is \underline{any} function of history: \red{$S_t = f(H_t)$}. But bad choice of state may loose relevant information contained in history.
 
-The \red{agent state} $S^a_t$ is the agent's internal representation, i.e. whatever information it uses to pick the next action. Formally, state is a function of the history \red{$S^a_t = \underbrace{f}_{\text{our choice}}(H_t)$}, where $H_t = O_1, R_1, A_1, ..., A_{t-1}, O_{t}, R_{t}$, i.e. \underline{summary} of all observable variables up to time $t$. \orange{And it's our decision of what to remember, what to throw away and how to summarize the history!}
+The \red{environment state} $S^e_t$ is the environment's private internal representation, i.e. whatever it uses to generate next observation and reward. \orange{Usually it is not observed}, so agent policies cannot depend on it.
+
+The \red{agent state} $S^a_t$ is the agent's internal representation, i.e. whatever information it uses to pick the next action. Formally, state is a function of the history \red{$S^a_t = \underbrace{f}_{\text{our choice}}(H_t)$}, where $H_t = O_1 A_1, R_2 O_2 A_2, ..., A_{t-1}, R_{t} O_{t}$, i.e. \underline{summary} of all observable variables up to time $t$. \orange{And it's our decision of what to remember, what to throw away and how to summarize the history!}
 
 An \red{information state} (a.k.a. \textcolor{red}{Markov state}) contains all useful information from the history. $S_t$ is Markov iff
 \begin{align*}
@@ -27,15 +30,31 @@ An \red{information state} (a.k.a. \textcolor{red}{Markov state}) contains all u
 \end{align*}
 \begin{itemize}
 	\item The future is independent of the past, given present: $H_{1:t} \to S_t \to H_{t+1:\infty}$;
-	\item once the state is known the history can be thrown away;
-	\item The state is sufficient statistics of the future (i.e. fully characterizes the future);
-	\item when we talk about distribution of some variable in the future, conditioning on the state is the same as conditioning on the history.
+	\item The state is sufficient statistics of the future (i.e. fully characterizes the future) - once the state is known the history can be thrown away;
+	\item When we model about distribution of some variable in the future, conditioning on the state is the same as conditioning on the history.
 \end{itemize}
 
+\begin{notebox}
+By definition...
+	\begin{itemize}
+		\item 	... environment state $S_t^e$ is Markov! But we don't observe it.
+		\item   ... full history $H_t$ is Markov! But it is too much.
+	\end{itemize}
+So there is always a Markov state, it is just whether we can find a useful state.
+\end{notebox}
 
-(???) POMDP (partially observable) vs MDP
+\red{Full observability} ($\Rightarrow$ \red{MDP}) is a particular case when agent directly observes environment:
+\begin{align}
+	O_t = S^e_t = S^a_t
+\end{align}
 
+\red{Partial observability} ($\Rightarrow$ \red{POMDP}): agent \textit{indirectly} observes environment $S^a_t \neq S^e_t$ and has to build his own state, for example:
+\begin{itemize}
+	\item \red{Beliefs} of environment state: $S^a_t = \Big(\Prob[S^e_t = s^1, ..., S^e_t = s^m]\Big)$
+	\item dynamic updates of most probable state estimate: $S^a_t = w_s S^a_{t-1} + w_o O_t$
+\end{itemize}
 
+\subsubsection{RL agent}
 \boxedtext{
 An \textcolor{red}{RL agent} may include one or more of these components:
 \begin{itemize}
@@ -45,19 +64,30 @@ An \textcolor{red}{RL agent} may include one or more of these components:
 		\item \red{deterministic}: $a = \pi(s)$
 		\item \red{stochastic(probabilistic)}: $\pi(a|s) = \Prob[A_t=a|S_t=s]$
 	\end{itemize}
-	\item \red{Value function}: how good is each state and/or action
+	\item \red{Value function}: how good is each state and/or action, prediction of expected future reward
 	\begin{itemize}
-		\item prediction of future reward: $v_{\pi}(s) = \EX_\pi[R_{t+1}+\gamma R_{t+2} + \gamma^2 R_{t+3} + ... | S_t = s]$
+		\item State-value function $\pi(s) = \E[\sum_{k=0} \gamma^k R_{t+1+k} | S_t = s]$
+		\item Action-value function $q(s) = \E[\sum_{k=0} \gamma^k R_{t+1+k} | S_t = s, A_t = a]$
 	\end{itemize}
-	\item \red{Model}: agent’s representation of the environment (what the environment will do next)
+	\item \red{Model}: how the agent thinks the environment works
 	\begin{itemize}
-			\item \red{dynamics}: $\mathcal{P}_{ss'}^a = \Prob[S_{t+1} = s' | S_t = s, A_t = a] $ models distribution of the next state
-			\item \red{rewards}: $\mathcal{R}_s^a = \E_\pi[R_{t+1} | S_t = s, A_t = a] $ models the next immediate reward
+			\item \red{dynamics}: $\TransitionProb_{ss'}^a = \Prob[S_{t+1} = s' | S_t = s, A_t = a] $ predicts the next state
+			\item \red{rewards}: $\Reward_s^a = \E_\pi[R_{t+1} | S_t = s, A_t = a] $ predicts the next immediate reward
+			\item it is optional to build model of environment, there are model-free methods
 	\end{itemize}
 \end{itemize}
 }
 
-\subsection{Taxonomy of RL agent}
+\begin{notebox}
+	The way to interpret $\gamma$ is that we effectively look $\frac{1}{1-\gamma}$ steps into the future.
+	\begin{itemize}
+		\item $\gamma=0.9 \to 10 $ steps
+		\item $\gamma=0.99 \to 100 $ steps
+	\end{itemize}
+\end{notebox}
+
+\subsubsection{Taxonomy of RL agent}
+Not all of the components above are necessary. Below is taxonomy of agents based on the presence    of certain elements.
 \begin{itemize}
 	\item \red{Value Based}: 
 	\begin{itemize}
