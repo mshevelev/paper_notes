@@ -1,0 +1,47 @@
+{
+    "InternalPDFViewer": {
+        "Embedded": true,
+        "File": "main.pdf"
+    },
+    "Session": {
+        "Bookmarks": [
+        ],
+        "CurrentFile": "mdp.tex",
+        "FileVersion": 1,
+        "Files": [
+            {
+                "Col": 12,
+                "EditorGroup": 0,
+                "FileName": "main.tex",
+                "FirstLine": 0,
+                "FoldedLines": "",
+                "Line": 3
+            },
+            {
+                "Col": 14,
+                "EditorGroup": 0,
+                "FileName": "mdp.tex",
+                "FirstLine": 53,
+                "FoldedLines": "",
+                "Line": 91
+            },
+            {
+                "Col": 0,
+                "EditorGroup": 0,
+                "FileName": "preamble.tex",
+                "FirstLine": 0,
+                "FoldedLines": "",
+                "Line": 41
+            },
+            {
+                "Col": 0,
+                "EditorGroup": 0,
+                "FileName": "intro.tex",
+                "FirstLine": 0,
+                "FoldedLines": "",
+                "Line": 11
+            }
+        ],
+        "MasterFile": ""
+    }
+}
