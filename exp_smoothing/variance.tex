@@ -1,5 +1,17 @@
-Consider a white noise $X_t \sim \mathsf {i.i.d.}  \Gaussian(0, 1)$ and two derived series:
-\begin{itemize}
-	\item $Y_t = \sum _{\tau=0}^{k-1} \frac{1}{k}X_{t-\tau}$
-	\item $Z_t = (1-e^{-\lambda})\sum_{\tau=0}^{\infty} e^{-\lambda \tau} X_{t-\tau}$
-\end{itemize}
+\section{Variance of EMA and relation to SMA}
+Consider a white noise $X_t \sim \mathsf {i.i.d.} \Gaussian(0, 1)$ and two derived series.
+
+For $Y_t = SMA_k(X_t) = \sum _{\tau=0}^{k-1} \frac{1}{k}X_{t-\tau}$ we have 
+\begin{align}
+	Var(Y_t) = \frac{1}{k} \label{eq:sma_variance}
+\end{align}
+
+On the other hand, for $Z_t = EMA_a(X_t) = (1-a)\sum_{\tau=0}^{\infty} a^{\tau} X_{t-\tau} = (1-a) X_t + a Z_{t-1}$ we have 
+\begin{align}
+Var(Z_t) = \frac{(1-a)^2}{1-a^2} = \frac{1-a}{1+a}	\label{eq:ema_variance}
+\end{align}
+
+Equating \autoref{eq:sma_variance} with \autoref{eq:ema_variance} we get a heuristic relation between parameters of SMA and EMA to achieve same level of smoothing
+\begin{align} 
+\boxed{a = \frac{k-1}{k+1}}
+\end{align}.
