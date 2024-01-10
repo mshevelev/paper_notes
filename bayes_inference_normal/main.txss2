@@ -1,0 +1,53 @@
+{
+    "InternalPDFViewer": {
+        "Embedded": true,
+        "File": "main.pdf"
+    },
+    "Session": {
+        "Bookmarks": [
+            {
+                "bookmarkNumber": -1,
+                "fileName": "../../workenv/cv/cv_eng.tex",
+                "lineNumber": 110,
+                "text": "cv_eng.tex\n&\\footnotesize{\\textcolor{red}{WQUber}} \\\\"
+            }
+        ],
+        "CurrentFile": "main.tex",
+        "FileVersion": 1,
+        "Files": [
+            {
+                "Col": 16,
+                "EditorGroup": 0,
+                "FileName": "main.tex",
+                "FirstLine": 0,
+                "FoldedLines": "",
+                "Line": 3
+            },
+            {
+                "Col": 0,
+                "EditorGroup": 0,
+                "FileName": "preamble.tex",
+                "FirstLine": 0,
+                "FoldedLines": "",
+                "Line": 0
+            },
+            {
+                "Col": 14,
+                "EditorGroup": 0,
+                "FileName": "block_inversion.tex",
+                "FirstLine": 0,
+                "FoldedLines": "",
+                "Line": 7
+            },
+            {
+                "Col": 0,
+                "EditorGroup": 0,
+                "FileName": "conditional_distribution.tex",
+                "FirstLine": 0,
+                "FoldedLines": "",
+                "Line": 0
+            }
+        ],
+        "MasterFile": ""
+    }
+}

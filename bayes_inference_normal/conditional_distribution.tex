@@ -1,0 +1,28 @@
+\section{Conditional Distribution}
+Let 
+\begin{align}
+\begin{bmatrix}
+	X \\ Y
+\end{bmatrix}
+\sim \Norm \Bigg(
+\begin{bmatrix}
+	\mu_X \\ \mu_Y
+\end{bmatrix},
+\begin{bmatrix}
+	\Sigma_{XX} & 	\Sigma_{XY} \\
+	\Sigma_{YX} & 	\Sigma_{YY} \\
+\end{bmatrix}
+\Bigg)
+\end{align}
+
+For simplicity let's introduce a new letter for inverse covariance matrix:
+\begin{align}
+	\mathcal{S} = \begin{bmatrix}
+		\Sigma_{XX} & 	\Sigma_{XY} \\
+		\Sigma_{YX} & 	\Sigma_{YY} \\
+	\end{bmatrix} ^ {-1} 
+= \begin{bmatrix}
+	\mathcal{S}_{XX} & 	\mathcal{S}_{XY} \\
+	\mathcal{S}_{YX} & 	\mathcal{S}_{YY} \\
+\end{bmatrix}
+\end{align}

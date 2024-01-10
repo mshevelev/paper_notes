@@ -1,0 +1,97 @@
+\section{Block inverse}
+
+Let 
+\begin{align}
+	X = \begin{bmatrix}
+		A_{n \times n} & B_{n \times m} \\
+		C_{m \times n} & D_{m \times m}
+	\end{bmatrix}
+\end{align}
+
+To find its inverse denote 
+\begin{align}
+	X^{-1} = \begin{bmatrix}
+		E_{n \times n} & F_{n \times m} \\
+		G_{m \times n} & H_{m \times m}
+	\end{bmatrix}
+\end{align}
+
+From equation 
+\begin{align}\label{eq:block_inverse_right}
+	X X^{-1} = I = \begin{bmatrix}
+		I_{n \times n} & 0_{n \times m} \\
+		0_{m \times n} & I_{m \times m}
+			\end{bmatrix}
+\end{align}
+
+we get a set of matrix equations
+
+
+\begin{align*}
+\begin{tiny}
+	\begin{aligned}
+	A E + B G &= I_{n \times n} \\
+	A F + B H &= 0_{n \times m} \\
+	C E + D G &= 0_{m \times n} \\
+	C F + D H &= I_{m \times m}
+	\end{aligned}
+\Rightarrow
+	\begin{aligned}
+	&A E - B D^{-1} C E = I_{n \times n} \\
+	&F = -A^{-1} B H \\
+	&G = -D^{-1} C E \\
+	&-C A^{-1} B H + D H = I_{m \times m}
+	\end{aligned}
+\Rightarrow
+	\begin{aligned}
+	E &= (A - B D^{-1} C)^{-1} \\
+	F &= -A^{-1} B H \\
+	G &= -D^{-1} C E \\
+	H &= (D - C A^{-1} B)^{-1}
+	\end{aligned}
+\end{tiny}
+\end{align*}
+
+and hence the answer
+\begin{align}
+	X^{-1} = \begin{bmatrix}
+		(A - B D^{-1} C)^{-1} & -A^{-1} B (D - C A^{-1} B)^{-1} \\
+		-D^{-1} C (A - B D^{-1} C)^{-1}  & (D - C A^{-1} B)^{-1}
+	\end{bmatrix}
+\end{align}
+
+Alternatively to \autoref{eq:block_inverse_right}, one can solve $X^{-1} X = I$ and get the answer 
+
+\begin{align*}
+	\begin{tiny}
+		\begin{aligned}
+			E A + F C &= I_{n \times n} \\
+			E B + F D &= 0_{n \times m} \\
+			G A + H C &= 0_{m \times n} \\
+			G B + H D &= I_{m \times m}
+		\end{aligned}
+		\Rightarrow
+		\begin{aligned}
+			&E A -E B D^{-1} C = I_{n \times n} \\
+			&F = -E B D^{-1} \\
+			&G = - H C A^{-1} \\
+			&- H C A^{-1} B + H D = I_{m \times m}
+		\end{aligned}
+		\Rightarrow
+		\begin{aligned}
+			E &= (A - B D^{-1} C)^{-1} \\
+			F &= -E B D^{-1} \\
+			G &= - H C A^{-1} \\
+			H &= (D - C A^{-1} B)^{-1}
+		\end{aligned}
+	\end{tiny}
+\end{align*}
+
+which gives the answer
+
+\begin{align}
+	X^{-1} = \begin{bmatrix}
+		(A - B D^{-1} C)^{-1} & -(A - B D^{-1} C)^{-1} B D^{-1} \\
+		-(D - C A^{-1} B)^{-1} C A^{-1}  & (D - C A^{-1} B)^{-1}
+	\end{bmatrix}
+\end{align}
