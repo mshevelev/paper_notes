@@ -1,5 +1,13 @@
 \section{Definition}
 
+For an infinite sequence $x_t$ we can define exponential moving average (EMA) as
+
+\begin{align}
+	y_t = \red{(1-a)} (x_t + a x_{t-1} + a^2 x_{t-2} + ...)
+\end{align}
+
+The factor \red{$(1-a)$} is
+
 $$
 Z_t = (1-e^{-\lambda}) \sum_{\tau=0}^{\infty} e^{-\lambda \tau} X_{t-\tau}
 $$

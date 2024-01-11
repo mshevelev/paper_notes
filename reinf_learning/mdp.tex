@@ -229,19 +229,19 @@ The \red{\textit{state}-value function $v_\pi(s)$} of an $\MDP$ is the expected 
 	v_{\red{\pi}}(s) = \E_{\red{\pi}}[G_t | S_t = s]
 \end{align}
 \begin{itemize}
-	\item subscript \red{$\pi$} means that we follow the policy $\pi$ after we live the state $S_t$;
+	\item \orange{meaning: how good it is to be in state $s$ if we then follow policy $\pi$;}
 	\item it is same as the value function of policy-induced $\MRP^{\pi}$
-	\item \orange{meaning: how good it is to be in state $s$ if we follow policy $\pi$}
+$\pi$
 \end{itemize}
 
-The \red{\textit{action}-value function $v_\pi(s)$} of an $\MDP$ is the expected return given I start at state $s$, make action $a$ and then follow the policy $\pi$:
+The \red{\textit{action}-value function $q_\pi(s, a)$} of an $\MDP$ is the expected return given I start at state $s$, make action $a$ and then follow the policy $\pi$:
 \begin{align}
 	q_{\red{\pi}}(s, a) = \E_{\red{\pi}}[G_t | S_t = s, A_t=a]
 \end{align}
 \begin{itemize}
-	\item subscript \red{$\pi$} means that we follow the policy $\pi$ after we live the state $S_t$;
+	\item \orange{meaning: how good it is to take action $a$ from state $s$ if we then follow policy $\pi$};
 	\item it is the quantity we are intuitively most interested in when selecting optimal action
-	\item \orange{meaning: how good it is to take action $a$ from state $s$ if we follow policy $\pi$}
+
 \end{itemize}
 %}
 
@@ -317,7 +317,7 @@ with direct solution
 \end{align*}
 }
 
-\subsection{Optimal Value Function}
+\subsubsection{Optimal Value Function}
 
 The \red{optimal state-value function $v_*(s)$} is the maximum state-value function over all policies:
 \begin{align*}
@@ -330,11 +330,29 @@ The \red{optimal action-value function $q_*(s, a)$}  is the maximum action-value
 \end{align*}
 
 \orange{Once we know $q_*(s, a)$, we immediately get $\pi_*$!}
+\begin{align*}
+	\pi_*(s) = \argmax_{a\in \Actions} q_*(s,a)
+\end{align*}
 
 \begin{notebox}
-	In the transition diagram:
+	When drawing state transition diagram, it is convenient to:
 	\begin{itemize}
-		\item $v_\pi(s)$ are assigned to nodes (states);
-		\item $q_\pi(s, a)$ are assigned to edges/arcs (action from a particular state).
+		\item assign $v_{\pi}(s)$ to nodes (states);
+		\item assign $q_{\pi}(s, a)$ to edges/arcs (action from a particular state).
 	\end{itemize}
 \end{notebox}
+
+\subsubsection{Bellman Optimality Equation}
+\begin{itemize}
+	\item Non-linear due to $\max$ operator;
+	\item no closed form solution (in general);
+	\item many iterative solution methods:
+	\begin{itemize}
+		\item Value iteration
+		\item Policy iteration
+		\item Q-learning
+		\item Sarsa
+	\end{itemize} 
+\end{itemize}
+
+Principle of optimality: to behave optimally, I should make an optimal step and then behave optimally from the new state. 
