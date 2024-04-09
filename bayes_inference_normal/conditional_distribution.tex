@@ -1,18 +1,48 @@
-\section{Conditional Distribution}
-Let 
+\section{Joint $\implies$ Conditional}
 \begin{align}
-\begin{bmatrix}
-	X \\ Y
-\end{bmatrix}
-\sim \Norm \Bigg(
-\begin{bmatrix}
-	\mu_X \\ \mu_Y
-\end{bmatrix},
-\begin{bmatrix}
-	\Sigma_{XX} & 	\Sigma_{XY} \\
-	\Sigma_{YX} & 	\Sigma_{YY} \\
-\end{bmatrix}
-\Bigg)
+	\begin{aligned}
+		\begin{bmatrix}
+			X \\ Y
+		\end{bmatrix}
+		\sim \Norm^{-1} \Bigg(
+		\begin{bmatrix}
+			\theta_X \\ \theta_Y
+		\end{bmatrix},
+		\begin{bmatrix}
+			\Lambda_{XX} & 	\Lambda_{XY} \\
+			\Lambda_{YX} & 	\Lambda_{YY} \\
+		\end{bmatrix}
+		\Bigg)
+	\end{aligned}
+	\implies
+	\begin{aligned}
+		p(X|Y) &= \Norm^{-1}(X| \theta_X - \Lambda_{XY} y, \Lambda_{XX})
+	\end{aligned}
+\end{align}
+
+
+
+\section{Joint $\implies$ Marginal}
+\begin{align}
+	\begin{aligned}
+		\begin{bmatrix}
+			X \\ Y
+		\end{bmatrix}
+		\sim \Norm \Bigg(
+		\begin{bmatrix}
+			\mu_X \\ \mu_Y
+		\end{bmatrix},
+		\begin{bmatrix}
+			\Sigma_{XX} & 	\Sigma_{XY} \\
+			\Sigma_{YX} & 	\Sigma_{YY} \\
+		\end{bmatrix}
+		\Bigg)
+	\end{aligned}
+\implies
+	\begin{aligned}
+		X &\sim \Norm(\mu_X, \Sigma_{XX}), \\ 
+		Y &\sim \Norm(\mu_Y, \Sigma_{YY})
+	\end{aligned}
 \end{align}
 
 For simplicity let's introduce a new letter for inverse covariance matrix:
