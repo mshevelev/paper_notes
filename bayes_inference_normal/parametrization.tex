@@ -1,0 +1,23 @@
+\section{Parametrizations}
+Let $x \sim \Norm(\mu, \Sigma)$ be an $N$-dimensional Gaussian random vector.
+
+Its pdf is 
+\begin{align}
+	p(x) = \Norm(x| \mu, \Sigma) = \frac{1}{\sqrt{(2 \pi)^n |\Sigma|}} \exp\left\{-\frac12 (x-\mu)^T \Sigma^{-1} (x-\mu)\right\}
+\end{align}
+
+The quadratic form in the exponent 
+\begin{align}
+	-2\log(p(x)) = x^T \Sigma^{-1} x - 2 x^T \Sigma^{-1} \mu + const
+\end{align}
+
+The pdf can be reparametrized using \textit{information parameters}:
+\begin{align}
+	\Lambda &= \Sigma^{-1}  &\text{(precision)}\\
+	\theta &= \Sigma^{-1} \mu = \Lambda \mu &\text{(natural parameter)}
+\end{align}
+we denote pdf function re-parameterized using \textit{information parameters} as
+\begin{align}
+	p(x) = \Norm^{-1}(x| \theta, \Lambda) \propto \exp\left\{x^T \theta - \frac12 x^T \Lambda x  \right\}
+\end{align}
+

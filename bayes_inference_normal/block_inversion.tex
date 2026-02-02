@@ -35,14 +35,14 @@ we get a set of matrix equations
 	C E + D G &= 0_{m \times n} \\
 	C F + D H &= I_{m \times m}
 	\end{aligned}
-\Rightarrow
+\implies
 	\begin{aligned}
 	&A E - B D^{-1} C E = I_{n \times n} \\
 	&F = -A^{-1} B H \\
 	&G = -D^{-1} C E \\
 	&-C A^{-1} B H + D H = I_{m \times m}
 	\end{aligned}
-\Rightarrow
+\implies
 	\begin{aligned}
 	E &= (A - B D^{-1} C)^{-1} \\
 	F &= -A^{-1} B H \\
@@ -70,14 +70,14 @@ Alternatively to \autoref{eq:block_inverse_right}, one can solve $X^{-1} X = I$ 
 			G A + H C &= 0_{m \times n} \\
 			G B + H D &= I_{m \times m}
 		\end{aligned}
-		\Rightarrow
+		\implies
 		\begin{aligned}
 			&E A -E B D^{-1} C = I_{n \times n} \\
 			&F = -E B D^{-1} \\
 			&G = - H C A^{-1} \\
 			&- H C A^{-1} B + H D = I_{m \times m}
 		\end{aligned}
-		\Rightarrow
+\implies
 		\begin{aligned}
 			E &= (A - B D^{-1} C)^{-1} \\
 			F &= -E B D^{-1} \\

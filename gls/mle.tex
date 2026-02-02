@@ -1,20 +1,22 @@
 \section{Generalized Least Squares Regression}
 \subsection{Basic model}
 Consider the model of data
-\begin{align}
+\begin{equation}
+\begin{aligned}
 	\label{eq:basic_model}
 	y &= X \beta + \epsilon  \\ 	
-	\epsilon &\sim \Norm(\epsilon| 0, \Sigma) \nonumber \\
-	X &\in \R^{n \times k}, y \in \R^n, \epsilon \in \R^n \nonumber 
-\end{align}
+	\epsilon &\sim \Norm(0, \Sigma) \\
+	X &\in \R^{n \times k}, y \in \R^n, \epsilon \in \R^n 
+\end{aligned}
+\end{equation}
 
 In the above, $\Sigma \in \MatricesPD^n$ is a known covariance matrix of errors, $\beta \in \R^k$ is an unknown constant vector of coefficients.  Our goal is to find a good estimate of $\beta$.
 
-Assuming $X$ is given, we have $y|X \sim \Norm(y| X\beta, \Sigma)$ and conditional log-likelihood of data $D=(X,y)$ is:
+Assuming $X$ is given, we have $p(y|X) = \Norm(y| X\beta, \Sigma)$ and conditional log-likelihood of data $D=(X,y)$ is:
 
 
 \begin{align*}
-	l(\beta) = \log f(y|X; \beta) \propto -\frac{1}{2} (y - X\beta)^T \Sigma^{-1} (y - X \beta)
+	l(\beta) := \log f(y|X; \beta) \propto -\frac{1}{2} (y - X\beta)^T \Sigma^{-1} (y - X \beta)
 \end{align*}
 
 \begin{definition}
@@ -43,7 +45,7 @@ Solution to the Problem \ref{eq:gls_opt_problem} can be written as
 \end{align}
 
 \subsection{Comparison to OLS}
-Looking at \autoref{eq:gls_opt_problem} one can note that GLS is equivalent to OLS if data $D=(X, y)$ is preprocessed. For example, using Cholesky decomposition $\Sigma = L L^T  $ we can lef-tmultiply the equation by $L^{-1}$:
+Looking at \autoref{eq:gls_opt_problem} one can note that GLS is equivalent to OLS if data $D=(X, y)$ is preprocessed. For example, using Cholesky decomposition $\Sigma = L L^T  $ we can left-multiply the equation by $L^{-1}$:
 \begin{align}
 	y' &= X' \beta + \eps' \\
 	y' &= L^{-1} y, X' = L^{-1} X \notag \\
@@ -52,7 +54,7 @@ Looking at \autoref{eq:gls_opt_problem} one can note that GLS is equivalent to O
 
 and the Problem \ref{eq:gls_opt_problem} reduces to the usual OLS problem: 
 \begin{align}
-	\label{eq:gls_opt_problem}
+	\label{eq:gls_opt_problem_eq}
 	\maximize_{\beta} -\frac{1}{2} (y' - X\beta)^T  (y' - X' \beta)  \Leftrightarrow \minimize_{\beta} \frac{1}{2} \norm{y' - X' \beta}_2^2
 \end{align}
 

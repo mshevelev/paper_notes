@@ -1,7 +1,7 @@
 \section{Joint Gaussian}
-Let $X \in \R^m$ and $p(X) = \Norm(X; \mu_X, \Sigma_{XX})$ and $p(Y|X) = \Norm(Y; \underset{\scriptscriptstyle m \times n}{A} X + b, \Sigma_{YY})$. Equivalently, $Y = A X + b + \eps$, where $\eps \sim \Norm(0, \Sigma_{YY})$. Then $(X, Y)$ is jointly Gaussian with pdf:
+Let $X \in \R^m$ and $p(X) = \Norm(X; \mu_X, \Sigma_{X})$ and $p(Y|X) = \Norm(Y; \underset{\scriptscriptstyle m \times n}{A} X + b, \Sigma_{\eps})$. Equivalently, $Y = A X + b + \eps$, where $\eps \sim \Norm(0, \Sigma_{\eps})$. Then $(X, Y)$ is jointly Gaussian with pdf:
 \begin{align}
 	p(X, Y) = \Norm\Bigg((X, Y); \begin{bmatrix}\mu_X \\ A \mu_X + b \end{bmatrix}, 
-	                            \begin{bmatrix}\Sigma_{XX} &  \Sigma_{XX} A^T \\ A \Sigma_{XX} & A \Sigma_{XX} A^T + \Sigma_{YY} \end{bmatrix} \Bigg
+	                            \begin{bmatrix}\Sigma_{X} &  \Sigma_{X} A^T \\ A \Sigma_{X} & A \Sigma_{X} A^T + \Sigma_{\eps} \end{bmatrix} \Bigg
 	                            )
 \end{align}
