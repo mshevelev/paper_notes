@@ -2,12 +2,12 @@
 
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{geometry}
-\usepackage{bm}
 \usepackage{mathtools}
+\usepackage{bm}
 
 \geometry{margin=1in}
 
-\title{Notes on a Stationary Linear Stochastic Process}
+\title{Stationary Optimization for a Linear Stochastic Process}
 \author{}
 \date{}
 
@@ -16,109 +16,184 @@
 
 \section{Setup}
 
-We consider a discrete-time stochastic process
+We consider the stationary stochastic process
 \begin{equation}
 x_n = \lambda x_{n-1} + \xi_n,
-\qquad |\lambda| < 1,
+\qquad 0 \le \lambda < 1,
 \end{equation}
 where
 \[
-\xi_n \sim \mathcal N(0, \sigma_\xi^2)
+\xi_n \sim \mathcal N(0,\sigma_\xi^2),
 \]
-are i.i.d. Gaussian shocks.
+i.i.d.
 
-The process is assumed to be in its stationary regime.
-
-\section{Basic Moments}
-
-The stationary variance of \(x_n\) satisfies
+The stationary variance is
 \begin{equation}
-\mathrm{Var}(x_n)
-= \lambda^2 \mathrm{Var}(x_{n-1}) + \sigma_\xi^2
+\mathbb E x_n^2
 = \frac{\sigma_\xi^2}{1-\lambda^2}.
 \end{equation}
 
-Hence,
-\begin{equation}
-\mathbb E[x_n^2]
-= \frac{\sigma_\xi^2}{1-\lambda^2}.
-\end{equation}
+Throughout, expectations are taken under the stationary distribution.
 
-\section{Difference Process}
+\section{Moments of Increments}
 
-Consider the increment
+The increment satisfies
 \[
 x_n - x_{n-1} = (\lambda - 1)x_{n-1} + \xi_n.
 \]
 
 Its variance is
 \begin{align}
-\mathrm{Var}(x_n - x_{n-1})
-&= (\lambda-1)^2 \mathrm{Var}(x_{n-1}) + \sigma_\xi^2 \\
-&= \sigma_\xi^2 \left( 1 + \frac{(\lambda-1)^2}{1-\lambda^2} \right).
+\mathbb E (x_n - x_{n-1})^2
+&= (\lambda-1)^2 \mathbb E x_{n-1}^2 + \sigma_\xi^2 \\
+&= \sigma_\xi^2 \left(
+1 + \frac{(\lambda-1)^2}{1-\lambda^2}
+\right) \\
+&= \sigma_\xi^2 \frac{2}{1+\lambda}.
 \end{align}
 
-Simplifying,
+Hence,
 \begin{equation}
-\mathrm{Var}(x_n - x_{n-1})
-= \sigma_\xi^2 \frac{2}{1+\lambda}.
+\boxed{
+\mathbb E (x_n - x_{n-1})^2
+= \sigma_\xi^2 \frac{2}{1+\lambda}
+}
+\end{equation}
+
+Since this is Gaussian with mean zero,
+\[
+x_n - x_{n-1} \sim \mathcal N
+\left(0,\sigma_\xi^2 \frac{2}{1+\lambda}\right),
+\]
+we obtain
+\begin{equation}
+\boxed{
+\mathbb E |x_n - x_{n-1}|
+= \frac{2}{\sqrt{\pi}}
+\frac{\sigma_\xi}{\sqrt{1+\lambda}}
+}
+\end{equation}
+
+For the whole WQ (as noted),
+\begin{equation}
+\mathbb E |x_n - x_{n-1}|
+\simeq \frac{2}{\pi} \frac{1}{\text{ADT}}.
+\end{equation}
+
+\section{Objective Function}
+
+We consider the objective
+\begin{equation}
+\mathbb E \Big[
+x_n \mu_n
+- S |x_n - x_{n-1}|
+- I (x_n - x_{n-1})^2
+- R x_n^2
+\Big].
+\end{equation}
+
+Using the stationary moments:
+\begin{align}
+\mathbb E x_n^2 &= \frac{\sigma_\xi^2}{1-\lambda^2}, \\
+\mathbb E (x_n - x_{n-1})^2
+&= \sigma_\xi^2 \frac{2}{1+\lambda}, \\
+\mathbb E |x_n - x_{n-1}|
+&= \frac{2}{\sqrt{\pi}} \frac{\sigma_\xi}{\sqrt{1+\lambda}}.
+\end{align}
+
+After substitution and grouping terms, the objective becomes
+\begin{equation}
+f(\lambda)
+= \sigma_\xi^2(\mu_n)
+\left[
+\frac{1}{2(I_n + R_n)}
+- \frac{4S}{\pi\,\mathrm{ADT}} \frac{1}{1+\lambda}
+- \frac{2I}{1+\lambda}
+- \frac{R}{1-\lambda^2}
+\right].
+\end{equation}
+
+We can drop the positive factor \(\sigma_\xi^2(\mu_n)\) and define
+\[
+f(\lambda) \equiv - g(\lambda),
+\]
+where minimization of \(g\) is equivalent to maximization of \(f\).
+
+\section{Reduced One-Dimensional Problem}
+
+Define
+\begin{equation}
+\boxed{
+g(\lambda)
+= \frac{a}{1+\lambda}
++ \frac{b}{1-\lambda^2}
+}
+\qquad \lambda \in [0,1),
+\end{equation}
+with
+\begin{align}
+a &= \frac{4S}{\pi\,\mathrm{ADT}} + 2I \ge 0, \\
+b &= R > 0.
+\end{align}
+
+This is a convex function on \([0,1)\).
+
+\section{Optimal \(\lambda^\star\)}
+
+Taking derivatives:
+\begin{equation}
+g'(\lambda)
+= -\frac{a}{(1+\lambda)^2}
++ \frac{2b\lambda}{(1-\lambda^2)^2}.
+\end{equation}
+
+Setting \(g'(\lambda)=0\) yields
+\begin{equation}
+(1-\lambda)^2 = \frac{2b}{a}.
+\end{equation}
+
+Thus the optimal solution is
+\begin{equation}
+\boxed{
+\lambda^\star
+= \frac{a + b - \sqrt{(a+b)^2 - a^2}}{a}
+}
+\qquad \in [0,1).
+\end{equation}
+
+Special cases:
+\begin{itemize}
+\item \(a \to 0 \Rightarrow \lambda^\star \to 0\)
+\item \(b \to 0 \Rightarrow \lambda^\star \to 1\)
+\end{itemize}
+
+\section{Recovering Optimal \(I^\star, R^\star\)}
+
+By definition,
+\begin{equation}
+\lambda = \frac{I}{I+R}.
+\end{equation}
+
+At the optimum,
+\begin{align}
+I^\star &= \lambda^\star g(\lambda^\star), \\
+R^\star &= (1-\lambda^\star) g(\lambda^\star),
+\end{align}
+where
+\begin{equation}
+g(\lambda^\star)
+= \frac{a}{1+\lambda^\star}
++ \frac{b}{1-(\lambda^\star)^2}.
 \end{equation}
 
 Thus,
 \begin{equation}
-\mathbb E[(x_n - x_{n-1})^2]
-= \sigma_\xi^2 \frac{2}{1+\lambda}.
+\boxed{
+\begin{aligned}
+I^\star &= \lambda^\star g(\lambda^\star), \\
+R^\star &= (1-\lambda^\star) g(\lambda^\star).
+\end{aligned}
+}
 \end{equation}
-
-\section{Absolute Value Expectations}
-
-Since \(x_n - x_{n-1}\) is Gaussian with zero mean,
-\[
-x_n - x_{n-1} \sim \mathcal N\!\left(0,\, \sigma_\xi^2 \frac{2}{1+\lambda}\right),
-\]
-we use the identity
-\[
-\mathbb E|Z| = \sqrt{\frac{2}{\pi}}\,\sigma,
-\quad Z \sim \mathcal N(0,\sigma^2).
-\]
-
-Therefore,
-\begin{equation}
-\mathbb E\lvert x_n - x_{n-1} \rvert
-= \sqrt{\frac{2}{\pi}}
-\sqrt{\sigma_\xi^2 \frac{2}{1+\lambda}}
-= \frac{2}{\sqrt{\pi}}
-\frac{\sigma_\xi}{\sqrt{1+\lambda}}.
-\end{equation}
-
-\section{Quadratic Objective (Illustrative)}
-
-Consider the expression
-\begin{equation}
-\mathbb E\left[
-x_n \mu_n
-- S \lvert x_n - x_{n-1} \rvert
-- R x_n^2
-\right].
-\end{equation}
-
-Using the results above:
-\begin{align}
-\mathbb E[x_n^2] &= \frac{\sigma_\xi^2}{1-\lambda^2}, \\
-\mathbb E|x_n - x_{n-1}|
-&= \frac{2}{\sqrt{\pi}} \frac{\sigma_\xi}{\sqrt{1+\lambda}}.
-\end{align}
-
-Hence the objective can be written explicitly in terms of
-\(\lambda, \sigma_\xi^2, S, R\).
-
-\section{Parameter Relation}
-
-In the notes, the parameter \(\lambda\) is defined as
-\begin{equation}
-\lambda = \frac{I}{I + R}.
-\end{equation}
-
-This ensures \(0 < \lambda < 1\) for \(I,R>0\).
 
 \end{document}
