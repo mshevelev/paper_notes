@@ -1,0 +1,124 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{geometry}
+\usepackage{bm}
+\usepackage{mathtools}
+
+\geometry{margin=1in}
+
+\title{Notes on a Stationary Linear Stochastic Process}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Setup}
+
+We consider a discrete-time stochastic process
+\begin{equation}
+x_n = \lambda x_{n-1} + \xi_n,
+\qquad |\lambda| < 1,
+\end{equation}
+where
+\[
+\xi_n \sim \mathcal N(0, \sigma_\xi^2)
+\]
+are i.i.d. Gaussian shocks.
+
+The process is assumed to be in its stationary regime.
+
+\section{Basic Moments}
+
+The stationary variance of \(x_n\) satisfies
+\begin{equation}
+\mathrm{Var}(x_n)
+= \lambda^2 \mathrm{Var}(x_{n-1}) + \sigma_\xi^2
+= \frac{\sigma_\xi^2}{1-\lambda^2}.
+\end{equation}
+
+Hence,
+\begin{equation}
+\mathbb E[x_n^2]
+= \frac{\sigma_\xi^2}{1-\lambda^2}.
+\end{equation}
+
+\section{Difference Process}
+
+Consider the increment
+\[
+x_n - x_{n-1} = (\lambda - 1)x_{n-1} + \xi_n.
+\]
+
+Its variance is
+\begin{align}
+\mathrm{Var}(x_n - x_{n-1})
+&= (\lambda-1)^2 \mathrm{Var}(x_{n-1}) + \sigma_\xi^2 \\
+&= \sigma_\xi^2 \left( 1 + \frac{(\lambda-1)^2}{1-\lambda^2} \right).
+\end{align}
+
+Simplifying,
+\begin{equation}
+\mathrm{Var}(x_n - x_{n-1})
+= \sigma_\xi^2 \frac{2}{1+\lambda}.
+\end{equation}
+
+Thus,
+\begin{equation}
+\mathbb E[(x_n - x_{n-1})^2]
+= \sigma_\xi^2 \frac{2}{1+\lambda}.
+\end{equation}
+
+\section{Absolute Value Expectations}
+
+Since \(x_n - x_{n-1}\) is Gaussian with zero mean,
+\[
+x_n - x_{n-1} \sim \mathcal N\!\left(0,\, \sigma_\xi^2 \frac{2}{1+\lambda}\right),
+\]
+we use the identity
+\[
+\mathbb E|Z| = \sqrt{\frac{2}{\pi}}\,\sigma,
+\quad Z \sim \mathcal N(0,\sigma^2).
+\]
+
+Therefore,
+\begin{equation}
+\mathbb E\lvert x_n - x_{n-1} \rvert
+= \sqrt{\frac{2}{\pi}}
+\sqrt{\sigma_\xi^2 \frac{2}{1+\lambda}}
+= \frac{2}{\sqrt{\pi}}
+\frac{\sigma_\xi}{\sqrt{1+\lambda}}.
+\end{equation}
+
+\section{Quadratic Objective (Illustrative)}
+
+Consider the expression
+\begin{equation}
+\mathbb E\left[
+x_n \mu_n
+- S \lvert x_n - x_{n-1} \rvert
+- R x_n^2
+\right].
+\end{equation}
+
+Using the results above:
+\begin{align}
+\mathbb E[x_n^2] &= \frac{\sigma_\xi^2}{1-\lambda^2}, \\
+\mathbb E|x_n - x_{n-1}|
+&= \frac{2}{\sqrt{\pi}} \frac{\sigma_\xi}{\sqrt{1+\lambda}}.
+\end{align}
+
+Hence the objective can be written explicitly in terms of
+\(\lambda, \sigma_\xi^2, S, R\).
+
+\section{Parameter Relation}
+
+In the notes, the parameter \(\lambda\) is defined as
+\begin{equation}
+\lambda = \frac{I}{I + R}.
+\end{equation}
+
+This ensures \(0 < \lambda < 1\) for \(I,R>0\).
+
+\end{document}
