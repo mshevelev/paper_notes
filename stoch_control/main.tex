@@ -4,196 +4,125 @@
 \usepackage{geometry}
 \usepackage{mathtools}
 \usepackage{bm}
+\usepackage{xcolor}
 
 \geometry{margin=1in}
 
-\title{Stationary Optimization for a Linear Stochastic Process}
+\title{Stochastic Control Optimization for Autocorrelated Returns}
 \author{}
 \date{}
 
 \begin{document}
 \maketitle
 
-\section{Setup}
+\section{Model Setup}
 
-We consider the stationary stochastic process
+We consider a process of returns $R_t$ composed of a forecast signal $F_t$ and white noise $\epsilon_t$:
 \begin{equation}
-x_n = \lambda x_{n-1} + \xi_n,
-\qquad 0 \le \lambda < 1,
+    R_t = F_t + \epsilon_t,
 \end{equation}
-where
-\[
-\xi_n \sim \mathcal N(0,\sigma_\xi^2),
-\]
-i.i.d.
+where $E[F_t] = 0$ and $E[\epsilon_t] = 0, \text{cov}(\epsilon_t, \epsilon_{t-k}) = \sigma^2 \delta_k$.
 
-The stationary variance is
+The forecast $F_t$ is modeled as an AR(1) process:
 \begin{equation}
-\mathbb E x_n^2
-= \frac{\sigma_\xi^2}{1-\lambda^2}.
+    F_t = \nu F_{t-1} + \eta_t, \quad |\nu| < 1,
 \end{equation}
-
-Throughout, expectations are taken under the stationary distribution.
-
-\section{Moments of Increments}
-
-The increment satisfies
-\[
-x_n - x_{n-1} = (\lambda - 1)x_{n-1} + \xi_n.
-\]
-
-Its variance is
-\begin{align}
-\mathbb E (x_n - x_{n-1})^2
-&= (\lambda-1)^2 \mathbb E x_{n-1}^2 + \sigma_\xi^2 \\
-&= \sigma_\xi^2 \left(
-1 + \frac{(\lambda-1)^2}{1-\lambda^2}
-\right) \\
-&= \sigma_\xi^2 \frac{2}{1+\lambda}.
-\end{align}
-
-Hence,
+where $\nu = \text{corr}(F_t, F_{t-1})$ represents the implicit decay in the forecast. 
+The autocovariance function of $F_t$ is given by:
 \begin{equation}
-\boxed{
-\mathbb E (x_n - x_{n-1})^2
-= \sigma_\xi^2 \frac{2}{1+\lambda}
-}
+    \rho(k) = \text{cov}(F_t, F_{t-k}) = \rho(0) \nu^{|k|}.
 \end{equation}
 
-Since this is Gaussian with mean zero,
-\[
-x_n - x_{n-1} \sim \mathcal N
-\left(0,\sigma_\xi^2 \frac{2}{1+\lambda}\right),
-\]
-we obtain
+We define a generating function $\phi(\lambda)$ for the autocovariance:
 \begin{equation}
-\boxed{
-\mathbb E |x_n - x_{n-1}|
-= \frac{2}{\sqrt{\pi}}
-\frac{\sigma_\xi}{\sqrt{1+\lambda}}
-}
+    \phi(\lambda) \coloneqq \sum_{k=0}^\infty \lambda^k \rho(k) = \frac{\rho(0)}{1 - \lambda \nu}.
 \end{equation}
 
-For the whole WQ (as noted),
+\section{Optimal Strategy Formulation}
+
+We search for an optimal position process $P_t$ in the class of processes defined by a scale parameter $A$
+    and an exponential decay parameter $\lambda$:
 \begin{equation}
-\mathbb E |x_n - x_{n-1}|
-\simeq \frac{2}{\pi} \frac{1}{\text{ADT}}.
-\end{equation}
-
-\section{Objective Function}
-
-We consider the objective
-\begin{equation}
-\mathbb E \Big[
-x_n \mu_n
-- S |x_n - x_{n-1}|
-- I (x_n - x_{n-1})^2
-- R x_n^2
-\Big].
-\end{equation}
-
-Using the stationary moments:
-\begin{align}
-\mathbb E x_n^2 &= \frac{\sigma_\xi^2}{1-\lambda^2}, \\
-\mathbb E (x_n - x_{n-1})^2
-&= \sigma_\xi^2 \frac{2}{1+\lambda}, \\
-\mathbb E |x_n - x_{n-1}|
-&= \frac{2}{\sqrt{\pi}} \frac{\sigma_\xi}{\sqrt{1+\lambda}}.
-\end{align}
-
-After substitution and grouping terms, the objective becomes
-\begin{equation}
-f(\lambda)
-= \sigma_\xi^2(\mu_n)
-\left[
-\frac{1}{2(I_n + R_n)}
-- \frac{4S}{\pi\,\mathrm{ADT}} \frac{1}{1+\lambda}
-- \frac{2I}{1+\lambda}
-- \frac{R}{1-\lambda^2}
-\right].
-\end{equation}
-
-We can drop the positive factor \(\sigma_\xi^2(\mu_n)\) and define
-\[
-f(\lambda) \equiv - g(\lambda),
-\]
-where minimization of \(g\) is equivalent to maximization of \(f\).
-
-\section{Reduced One-Dimensional Problem}
-
-Define
-\begin{equation}
-\boxed{
-g(\lambda)
-= \frac{a}{1+\lambda}
-+ \frac{b}{1-\lambda^2}
-}
-\qquad \lambda \in [0,1),
-\end{equation}
-with
-\begin{align}
-a &= \frac{4S}{\pi\,\mathrm{ADT}} + 2I \ge 0, \\
-b &= R > 0.
-\end{align}
-
-This is a convex function on \([0,1)\).
-
-\section{Optimal \(\lambda^\star\)}
-
-Taking derivatives:
-\begin{equation}
-g'(\lambda)
-= -\frac{a}{(1+\lambda)^2}
-+ \frac{2b\lambda}{(1-\lambda^2)^2}.
-\end{equation}
-
-Setting \(g'(\lambda)=0\) yields
-\begin{equation}
-(1-\lambda)^2 = \frac{2b}{a}.
-\end{equation}
-
-Thus the optimal solution is
-\begin{equation}
-\boxed{
-\lambda^\star
-= \frac{a + b - \sqrt{(a+b)^2 - a^2}}{a}
-}
-\qquad \in [0,1).
-\end{equation}
-
-Special cases:
-\begin{itemize}
-\item \(a \to 0 \Rightarrow \lambda^\star \to 0\)
-\item \(b \to 0 \Rightarrow \lambda^\star \to 1\)
-\end{itemize}
-
-\section{Recovering Optimal \(I^\star, R^\star\)}
-
-By definition,
-\begin{equation}
-\lambda = \frac{I}{I+R}.
-\end{equation}
-
-At the optimum,
-\begin{align}
-I^\star &= \lambda^\star g(\lambda^\star), \\
-R^\star &= (1-\lambda^\star) g(\lambda^\star),
-\end{align}
-where
-\begin{equation}
-g(\lambda^\star)
-= \frac{a}{1+\lambda^\star}
-+ \frac{b}{1-(\lambda^\star)^2}.
-\end{equation}
-
-Thus,
-\begin{equation}
-\boxed{
 \begin{aligned}
-I^\star &= \lambda^\star g(\lambda^\star), \\
-R^\star &= (1-\lambda^\star) g(\lambda^\star).
+    P_t &= A G_t, \\
+    G_t &= F_t + \lambda G_{t-1} = \sum_{k=0}^\infty \lambda^k F_{t-k}.
 \end{aligned}
-}
+\end{equation}
+where $G_t$ is the exponentially weighted sum of past forecasts.
+
+Equivalently, 
+\begin{equation}
+P_t = A F_t + \lambda P_{t-1}
+\end{equation}
+
+Note: $P_t$ is an $AR(2)$ process: 
+\begin{equation}
+    P_t =  A \eta_t + (\lambda + \nu) P_{t-1} - \lambda \nu P_{t-2}.
+\end{equation}
+
+\section{Derived Quantities and Costs}
+
+We compute the expectations of several quantities over $T$ steps (as $T \to \infty$).
+
+\subsection{Ideal P\&L (IPNL)}
+The expected ideal P\&L is:
+\begin{equation}
+    E[\text{IPNL}] = E\left[ \sum_{t=1}^T P_t F_t \right] = A T \sum_{k=0}^\infty \lambda^k E[F_t F_{t-k}] = A T \phi(\lambda) = A T \frac{\rho(0)}{1 - \lambda \nu}.
+\end{equation}
+
+\subsection{Self-Self Impact Cost (SSI)}
+SSI refers to the quadratic trade cost. The trades are $P_t - P_{t-1} = A(G_t - G_{t-1}) = A(F_t + (\lambda-1)G_{t-1})$.
+\begin{equation}
+    E[\text{SSI}] = \mu \frac{\sigma}{\text{ADV}} E\left[ \sum (P_t - P_{t-1})^2 \right]
+\end{equation}
+For the AR(1) case, this simplifies to:
+\begin{equation}
+    E[\text{SSI}] = A^2 T \frac{2 \mu \sigma}{\text{ADV}} \rho(0) \frac{1-\nu}{(1+\lambda)(1-\lambda\nu)}.
+\end{equation}
+
+\subsection{Self-Self Risk Cost (SSR)}
+SSR is the quadratic holding cost (variance cost):
+\begin{equation}
+    E[\text{SSR}] = \gamma \sigma^2 E\left[ \sum P_t^2 \right] = A^2 T \gamma \sigma^2 E[G_t^2].
+\end{equation}
+For AR(1) forecasts:
+\begin{equation}
+    E[\text{SSR}] = A^2 T \gamma \sigma^2 \frac{\rho(0)}{1-\lambda^2} \frac{1+\lambda \nu}{1 - \lambda \nu}.
+\end{equation}
+
+\section{Utility Maximization}
+
+The objective is to maximize the expected utility:
+\begin{equation}
+    U(A, \lambda) = E[\text{IPNL}] - E[\text{SSI}] - E[\text{SSR}].
+\end{equation}
+Ignoring the factor $T \rho(0)$ and substituting $b(\lambda) = \frac{1}{1-\lambda\nu}$, we can write:
+\begin{equation}
+    \frac{U(A, \lambda)}{T \rho(0)} = A b(\lambda) - A^2 a(\lambda),
+\end{equation}
+where
+\begin{equation}
+    a(\lambda) = \frac{1}{1 - \lambda \nu} \left( \frac{2 \mu \sigma}{\text{ADV}} \frac{1-\nu}{1+\lambda} + \gamma \sigma^2 \frac{1+\lambda\nu}{1-\lambda^2} \right).
+\end{equation}
+
+\subsection{Solving for $A$}
+For a fixed $\lambda$, the optimal $A_*$ is:
+\begin{equation}
+    A_*(\lambda) = \frac{b(\lambda)}{2 a(\lambda)}.
+\end{equation}
+
+\subsection{Solving for $\lambda$}
+Substituting $A_*$ back into the utility:
+\begin{equation}
+    U^*(\lambda) = \frac{b^2(\lambda)}{4 a(\lambda)}.
+\end{equation}
+Maximizing $U^*(\lambda)$ is equivalent to minimizing $V(\lambda) \coloneqq \frac{4 a(\lambda)}{b^2(\lambda)}$:
+\begin{equation}
+    V(\lambda) = 4(1 - \lambda \nu) \left[ \frac{2 \mu \sigma}{\text{ADV}} \frac{1-\nu}{1+\lambda} + \gamma \sigma^2 \frac{1+\lambda\nu}{1-\lambda^2} \right].
+\end{equation}
+The optimal $\lambda_*$ is found by setting the derivative to zero, which recaps to the quadratic solution shown in the notes:
+\begin{equation}
+    \lambda_* = \text{argmin}_\lambda V(\lambda).
 \end{equation}
 
 \end{document}
