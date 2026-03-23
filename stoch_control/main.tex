@@ -38,10 +38,20 @@ We define a generating function $\phi(\lambda)$ for the autocovariance:
     \phi(\lambda) \coloneqq \sum_{k=0}^\infty \lambda^k \rho(k) = \frac{\rho(0)}{1 - \lambda \nu}.
 \end{equation}
 
-\section{Optimal Strategy Formulation}
+\section{Optimization Problem Formulation}
 
-We search for an optimal position process $P_t$ in the class of processes defined by a scale parameter $A$
-    and an exponential decay parameter $\lambda$:
+The objective is to maximize the expected utility over a long trading horizon of $T$ steps, balancing the expected Ideal P\&L (IPNL) against trading costs (Self-Self Impact, or SSI) and holding costs (Self-Self Risk, or SSR):
+\begin{equation}
+    U = E[\text{IPNL}] - E[\text{SSI}] - E[\text{SSR}].
+\end{equation}
+
+Instead of solving the full time-varying dynamic programming problem to maximize this utility step-by-step, we optimize the steady-state performance over a long horizon. This yields a time-invariant trading strategy with constant coefficients, which is highly practical to execute. 
+
+\textit{Remark on Optimality:} One might wonder if a more complex strategy could achieve a higher utility. However, a fundamental result in stochastic control theory for Linear-Quadratic (LQ) problems (linear AR(1) dynamics, quadratic impact and risk costs) establishes that the optimal unconstrained policy is always a linear function of the state variables. Furthermore, as the trading horizon $T \to \infty$, the optimal dynamic policy asymptotically converges to a steady-state class with constant coefficients. Therefore, in the stationary limit, no better solution exists outside this family.
+
+\section{Optimal Strategy Class}
+
+Guided by the steady-state approach, we search for an optimal position process $P_t$ in the class of exponential decay processes defined by a scale parameter $A$ and an exponential decay parameter $\lambda$:
 \begin{equation}
 \begin{aligned}
     P_t &= A G_t, \\
@@ -62,7 +72,7 @@ Note: $P_t$ is an $AR(2)$ process:
 
 \section{Derived Quantities and Costs}
 
-We compute the unconditional (stationary) expectations of several quantities over a long trading horizon of $T$ steps. By stationarity, the expected sum over $T$ steps is simply $T$ times the unconditional expectation of a single step.
+We compute the unconditional (stationary) expectations of the utility components over a long trading horizon of $T$ steps. By stationarity, the expected sum over $T$ steps is simply $T$ times the unconditional expectation of a single step.
 
 \subsection{Ideal P\&L (IPNL)}
 The expected ideal P\&L is:
@@ -90,13 +100,9 @@ For AR(1) forecasts:
     E[\text{SSR}] = A^2 T \gamma \sigma^2 \frac{\rho(0)}{1-\lambda^2} \frac{1+\lambda \nu}{1 - \lambda \nu}.
 \end{equation}
 
-\section{Utility Maximization}
+\section{Maximizing Utility}
 
-The objective is to maximize the expected utility:
-\begin{equation}
-    U(A, \lambda) = E[\text{IPNL}] - E[\text{SSI}] - E[\text{SSR}].
-\end{equation}
-Ignoring the factor $T \rho(0)$ and substituting $b(\lambda) = \frac{1}{1-\lambda\nu}$, we can write:
+Having derived the components of the expected utility $U(A, \lambda) = E[\text{IPNL}] - E[\text{SSI}] - E[\text{SSR}]$, suppressing the overall factor $T \rho(0)$ and substituting $b(\lambda) = \frac{1}{1-\lambda\nu}$, we can write the scaled utility as:
 \begin{equation}
     \frac{U(A, \lambda)}{T \rho(0)} = A b(\lambda) - A^2 a(\lambda),
 \end{equation}
