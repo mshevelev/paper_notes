@@ -21,7 +21,7 @@ We consider a process of returns $R_t$ composed of a forecast signal $F_t$ and w
 \begin{equation}
     R_t = F_t + \epsilon_t,
 \end{equation}
-where $E[F_t] = 0$ and $E[\epsilon_t] = 0, \text{cov}(\epsilon_t, \epsilon_{t-k}) = \sigma^2 \delta_k$.
+where $E[F_t] = 0$ and $E[\epsilon_t] = 0$, $\text{cov}(\epsilon_t, \epsilon_{t-k}) = \sigma_\epsilon^2 \delta_k$.
 
 The forecast $F_t$ is modeled as an AR(1) process:
 \begin{equation}
@@ -62,18 +62,18 @@ Note: $P_t$ is an $AR(2)$ process:
 
 \section{Derived Quantities and Costs}
 
-We compute the expectations of several quantities over $T$ steps (as $T \to \infty$).
+We compute the unconditional (stationary) expectations of several quantities over a long trading horizon of $T$ steps. By stationarity, the expected sum over $T$ steps is simply $T$ times the unconditional expectation of a single step.
 
 \subsection{Ideal P\&L (IPNL)}
 The expected ideal P\&L is:
 \begin{equation}
-    E[\text{IPNL}] = E\left[ \sum_{t=1}^T P_t F_t \right] = A T \sum_{k=0}^\infty \lambda^k E[F_t F_{t-k}] = A T \phi(\lambda) = A T \frac{\rho(0)}{1 - \lambda \nu}.
+    E[\text{IPNL}] = E\left[ \sum_{t=1}^T P_t R_t \right] = E\left[ \sum_{t=1}^T P_t F_t \right] = A T \sum_{k=0}^\infty \lambda^k E[F_t F_{t-k}] = A T \phi(\lambda) = A T \frac{\rho(0)}{1 - \lambda \nu}.
 \end{equation}
 
 \subsection{Self-Self Impact Cost (SSI)}
 SSI refers to the quadratic trade cost. The trades are $P_t - P_{t-1} = A(G_t - G_{t-1}) = A(F_t + (\lambda-1)G_{t-1})$.
 \begin{equation}
-    E[\text{SSI}] = \mu \frac{\sigma}{\text{ADV}} E\left[ \sum (P_t - P_{t-1})^2 \right]
+    E[\text{SSI}] = \mu \frac{\sigma}{\text{ADV}} E\left[ \sum_{t=1}^T (P_t - P_{t-1})^2 \right]
 \end{equation}
 For the AR(1) case, this simplifies to:
 \begin{equation}
@@ -83,7 +83,7 @@ For the AR(1) case, this simplifies to:
 \subsection{Self-Self Risk Cost (SSR)}
 SSR is the quadratic holding cost (variance cost):
 \begin{equation}
-    E[\text{SSR}] = \gamma \sigma^2 E\left[ \sum P_t^2 \right] = A^2 T \gamma \sigma^2 E[G_t^2].
+    E[\text{SSR}] = \gamma \sigma^2 E\left[ \sum_{t=1}^T P_t^2 \right] = A^2 T \gamma \sigma^2 E[G_t^2].
 \end{equation}
 For AR(1) forecasts:
 \begin{equation}
